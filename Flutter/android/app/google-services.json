@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "843769721265",
+    "firebase_url": "https://elastic-1521302122838.firebaseio.com",
+    "project_id": "elastic-1521302122838",
+    "storage_bucket": "elastic-1521302122838.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:843769721265:android:fe41620e52dc6d93370d90",
+        "android_client_info": {
+          "package_name": "com.wbuthker.student"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "843769721265-k870erit62215vs1il6h1peq4md17813.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBLF3QJJlJ8U14JI1duYGIOh9mdjgV-ADI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "843769721265-k870erit62215vs1il6h1peq4md17813.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

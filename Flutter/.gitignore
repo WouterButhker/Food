@@ -9,6 +9,10 @@
 .buildlog/
 .history
 .svn/
+.gradle/
+gradle/
+gradlew
+gradlew.bat
 
 # IntelliJ related
 *.iml
