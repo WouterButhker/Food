@@ -1,9 +1,9 @@
 #Todo
 ## Frontend
 * mee-eters
-* Quotes
-* Notities/boodschappenlijst
-* Turfjes
+* Quotes?
+* Notities/boodschappenlijst?
+* Turfjes?
 
 ##Backend
 * framework
