@@ -14,9 +14,11 @@ class Food extends StatelessWidget {
               child: DateSelector(),
               margin: EdgeInsets.all(10),
             ),
-            Container(
-              child: Selector(),
-              margin: EdgeInsets.fromLTRB(40, 20, 40, 20),
+            Expanded(
+              child: Container(
+                child: Selector(),
+                margin: EdgeInsets.fromLTRB(20, 20, 20, 20),
+              ),
             )
           ],
         ));
@@ -57,12 +59,12 @@ class Selector extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-      child: Column(
+      child: GridView.count(
+        crossAxisCount: 2,
+
         children: <Widget>[
-          Center(
-            child: Text("MMMMMM"),
-          ),
-          Grid
+          Text("Pieter"),
+          Text("Eeet mee")
         ],
       ),
     );
