@@ -14,7 +14,7 @@ class MyApp extends StatelessWidget {
         child: Consumer<ThemeModel>(builder: (context, theme, child) {
           return MaterialApp(
               title: 'Student tools',
-              initialRoute: '/login',
+              initialRoute: '/main',
               routes: {
                 '/login': (context) => Login(),
                 '/main': (context) => MainScreen(),
