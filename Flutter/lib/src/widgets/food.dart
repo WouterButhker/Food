@@ -8,7 +8,7 @@ class Food extends StatelessWidget {
     // TODO: implement build
     return Scaffold(
         appBar: AppBar(
-          title: Text("HALLO"),
+          title: Text("Eten"),
         ),
         body: Column(
           children: <Widget>[
@@ -36,7 +36,10 @@ class DateSelector extends StatelessWidget {
         Container(
           child: Expanded(
             child: Center(
-              child: Icon(Icons.chevron_left),
+              child: RawMaterialButton(
+                child: Icon(Icons.chevron_left),
+                onPressed: () {},
+              ),
             ),
           ),
         ),
@@ -48,7 +51,10 @@ class DateSelector extends StatelessWidget {
         Container(
           child: Expanded(
             child: Center(
-              child: Icon(Icons.chevron_right),
+              child: RawMaterialButton(
+                child: Icon(Icons.chevron_right),
+                onPressed: () {},
+              ),
             ),
           ),
         ),
@@ -74,15 +80,21 @@ class Choice extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Row(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
         RawMaterialButton(
           onPressed: () {},
+          // alone
+          onLongPress: () {},
+          // more people
           child: Icon(
             Icons.check,
             color: Colors.white,
           ),
           shape: CircleBorder(),
           fillColor: Colors.green,
+          elevation: 2,
         ),
         RawMaterialButton(
           onPressed: () {},
@@ -92,6 +104,7 @@ class Choice extends StatelessWidget {
           ),
           shape: CircleBorder(),
           fillColor: Colors.red,
+          elevation: 2,
         ),
         RawMaterialButton(
           onPressed: () {},
@@ -101,6 +114,7 @@ class Choice extends StatelessWidget {
           ),
           shape: CircleBorder(),
           fillColor: Colors.blue,
+          elevation: 2,
         ),
         RawMaterialButton(
           onPressed: () {},
@@ -114,6 +128,17 @@ class Choice extends StatelessWidget {
           ),
           shape: CircleBorder(),
           fillColor: Colors.orange,
+          elevation: 2,
+        ),
+        RawMaterialButton(
+          onPressed: () {},
+          child: Text(
+            "...",
+            style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+          ),
+          shape: CircleBorder(),
+          fillColor: Colors.grey,
+          elevation: 2,
         )
       ],
     );

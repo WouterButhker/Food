@@ -9,7 +9,7 @@ ThemeData darkTheme = ThemeData(
   accentColor: Colors.orangeAccent,
 );
 
-class ThemeModel extends ChangeNotifier {
+class ThemeState extends ChangeNotifier {
   ThemeData _themeData = myTheme;
   String _currentTheme = "Light";
 
@@ -29,7 +29,7 @@ class ThemeModel extends ChangeNotifier {
   }
 }
 
-class ThemeButtonModel extends ChangeNotifier {
+class ThemeButtonState extends ChangeNotifier {
   String _buttonText = "Dark mode";
 
   String get buttonText => _buttonText;
