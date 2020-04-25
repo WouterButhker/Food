@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:student/src/communication/server_communication.dart';
 import 'package:student/src/icons/chef_hat_icons.dart';
 
 class Food extends StatelessWidget {
@@ -122,7 +123,9 @@ class Choice extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
         RawMaterialButton(
-          onPressed: () {},
+          onPressed: () {
+            ServerCommunication.authenticatedGet("/test");
+          },
           // alone
           onLongPress: () {},
           // more people
