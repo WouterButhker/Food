@@ -15,9 +15,12 @@ class MainScreen extends StatelessWidget {
           child: Column(
             children: <Widget>[
               ChangeNotifierProvider(
-                  create: (context) => ThemeButtonState(),
-                  child: Buttons()),
-              Expanded(child: GroupList()),
+                create: (context) => ThemeButtonState(),
+                child: Buttons(),
+              ),
+              Expanded(
+                child: GroupList(),
+              ),
             ],
           ),
           margin: EdgeInsets.all(20),
@@ -37,12 +40,15 @@ class Buttons extends StatelessWidget {
         Container(
           margin: EdgeInsets.all(5),
           child: RaisedButton(
-            child: Consumer<ThemeButtonState>(builder: (context, button, child) {
-              return Text(button.buttonText);
-            },),
+            child: Consumer<ThemeButtonState>(
+              builder: (context, button, child) {
+                return Text(button.buttonText);
+              },
+            ),
             onPressed: () {
               Provider.of<ThemeState>(context, listen: false).changeTheme();
-              Provider.of<ThemeButtonState>(context, listen: false).changeText();
+              Provider.of<ThemeButtonState>(context, listen: false)
+                  .changeText();
             },
           ),
         ),
@@ -64,8 +70,6 @@ class Buttons extends StatelessWidget {
   }
 }
 
-
-
 class GroupList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -85,7 +89,7 @@ class GroupList extends StatelessWidget {
 }
 
 class GroupModel extends ChangeNotifier {
-  final List<String> _groups = ["test", "test2", "Test99", "Test420"];
+  final List<String> _groups = ["Samballen", "test2", "Test99", "Test420"];
 
   List<String> get groups => _groups;
 
