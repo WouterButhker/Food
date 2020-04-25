@@ -1,8 +1,4 @@
 {
   "properties": [
-    {
-      "name": "jdbc.url",
-      "type": "java.lang.String",
-      "description": "Description for jdbc.url."
-  }
-] }
+
+  ] }
