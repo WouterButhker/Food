@@ -46,7 +46,7 @@ class Login extends StatelessWidget {
     if (_formKey.currentState.validate()) {
       _formKey.currentState.save();
       ServerCommunication.login(_email, _password).then((val) {
-        print("body: " + val.body);
+        print("body: " + val.statusCode.toString());
         //print("status: " + val.statusCode.toString());
       }).catchError((error) {
         print("ERROR: " + error.toString());

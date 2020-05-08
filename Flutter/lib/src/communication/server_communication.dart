@@ -29,7 +29,9 @@ class ServerCommunication {
     http.Response _res = await http.get(_url, headers: _headers).timeout(Duration(seconds: 5));
     if (_res.statusCode == 200) {
       // save user info
+      saveUserData(email, int.parse(_res.body));
     }
+    return _res;
   }
 
   static void saveUserData(String email, int id) async {
@@ -38,6 +40,7 @@ class ServerCommunication {
     _prefs.setString("email", email);
     _prefs.setString("header", _auth);
     _prefs.setInt("userId", id);
+    print("ADD ID " + id.toString());
 
   }
 }

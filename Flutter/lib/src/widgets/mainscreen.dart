@@ -1,13 +1,29 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:student/src/theme/theme.dart';
 
 class MainScreen extends StatelessWidget {
+  final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: scaffoldKey,
       appBar: AppBar(
         title: Text("Welkom"),
+        actions: <Widget>[
+          IconButton(
+            icon: Icon(Icons.account_circle),
+            onPressed: () {
+
+              SharedPreferences.getInstance().then((pref) {
+                SnackBar snacc = SnackBar(content: Text(pref.getInt("userId").toString() + pref.getString("email")),);
+                scaffoldKey.currentState.showSnackBar(snacc);
+              });
+
+            },
+          )
+        ],
       ),
       body: ChangeNotifierProvider(
         create: (context) => GroupModel(),

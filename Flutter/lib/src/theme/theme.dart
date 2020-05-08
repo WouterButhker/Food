@@ -44,7 +44,19 @@ class ThemeState extends ChangeNotifier {
 }
 
 class ThemeButtonState extends ChangeNotifier {
-  String _buttonText = "Dark mode";
+  String _buttonText ="";
+
+  ThemeButtonState()  {
+    initText();
+  }
+
+  void initText() async {
+    final _prefs = await SharedPreferences.getInstance();
+    _buttonText = _getButtonTextFromTheme(_prefs.getString("theme") ?? "Light");
+
+    // button might have been displayed before the correct value was loaded
+    notifyListeners();
+  }
 
   String get buttonText => _buttonText;
 
@@ -52,6 +64,15 @@ class ThemeButtonState extends ChangeNotifier {
     if (_buttonText == "Dark mode") _buttonText = "Light mode";
     else _buttonText = "Dark mode";
     notifyListeners();
+  }
+
+  String _getButtonTextFromTheme(String theme) {
+    switch(theme) {
+      case "Light":
+        return "Dark mode";
+      default:
+        return "Light mode";
+    }
   }
 }
 
