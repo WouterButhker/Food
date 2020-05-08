@@ -26,6 +26,9 @@ public class User implements UserDetails {
     @Column(name = "enabled")
     private boolean accountIsEnabled = true;
 
+    @OneToMany(mappedBy = "user")
+    Set<GroupUserPermission> groupUserPermissions;
+
     public User(String emailAddress, String password, boolean accountIsEnabled) {
         this.emailAddress = emailAddress;
         this.password = password;
