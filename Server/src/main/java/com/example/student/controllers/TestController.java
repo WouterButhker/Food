@@ -1,20 +1,26 @@
 package com.example.student.controllers;
 
+import com.example.student.entities.User;
 import com.example.student.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping(path = "/test")
+
 public class TestController {
 
     @Autowired
     UserRepository userRepository;
 
-    @GetMapping()
+    @GetMapping(path = "/login")
     public String test() {
-        return "<h1>HALLO</h1>";
+        System.out.println("PRINT HALLO");
+        return userRepository.findByEmailAddress("Wouter").get().getId().toString();
     }
+
+
+
 }

@@ -5,6 +5,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
 import java.util.Collection;
+import java.util.Set;
 
 @Entity
 public class User implements UserDetails {
@@ -14,7 +15,7 @@ public class User implements UserDetails {
     @Column(name = "id", nullable = false)
     private Integer id;
 
-    @Column(name = "username", unique = true, nullable = false)
+    @Column(name = "emailAddress", unique = true, nullable = false)
     private String emailAddress;
 
     @Column(name = "password", nullable = false, length = 60)
