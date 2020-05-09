@@ -1,7 +1,10 @@
+import 'dart:convert';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:student/src/communication/server_communication.dart';
 import 'package:student/src/icons/chef_hat_icons.dart';
+import 'package:student/src/logic/reservation.dart';
 
 class Food extends StatelessWidget {
   @override
@@ -62,6 +65,11 @@ class DateSelector extends StatelessWidget {
       ],
       mainAxisAlignment: MainAxisAlignment.center,
     );
+  }
+
+  void _getDate() {
+    DateTime _today = DateTime.now();
+
   }
 }
 
@@ -124,7 +132,9 @@ class Choice extends StatelessWidget {
       children: <Widget>[
         RawMaterialButton(
           onPressed: () {
-            ServerCommunication.authenticatedGet("/test");
+            Reservation _res = Reservation("Samballen", DateTime.now(), 1,  amountEating: 1);
+            String _json = jsonEncode(_res);
+            print(_json);
           },
           // alone
           onLongPress: () {},
