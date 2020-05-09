@@ -15,11 +15,12 @@ class MainScreen extends StatelessWidget {
           IconButton(
             icon: Icon(Icons.account_circle),
             onPressed: () {
-
               SharedPreferences.getInstance().then((pref) {
-                SnackBar snacc = SnackBar(content: Text(pref.getInt("userId").toString() + pref.getString("email")),);
-                scaffoldKey.currentState.showSnackBar(snacc);
+                Navigator.pushReplacementNamed(context, "/login");
+                pref.setBool("loggedIn", false);
               });
+              SnackBar snacc = SnackBar(content: Text("Logged out"));
+              scaffoldKey.currentState.showSnackBar(snacc);
 
             },
           )

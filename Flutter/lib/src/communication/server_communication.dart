@@ -40,7 +40,11 @@ class ServerCommunication {
     _prefs.setString("email", email);
     _prefs.setString("header", _auth);
     _prefs.setInt("userId", id);
-    print("ADD ID " + id.toString());
+    _prefs.setBool("loggedIn", true);
+
+  }
+
+  static void sendReservation() {
 
   }
 }
