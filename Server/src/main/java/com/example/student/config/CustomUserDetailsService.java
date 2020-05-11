@@ -15,7 +15,6 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     public CustomUserDetailsService(UserRepository users) {
         this.users = users;
-        this.users.save(new User("Wouter", new BCryptPasswordEncoder().encode("123"), true));
     }
 
     /**

@@ -2,6 +2,7 @@ package com.example.student.entities;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
+import javax.persistence.criteria.CriteriaBuilder;
 import java.io.Serializable;
 import java.util.Objects;
 
@@ -9,10 +10,10 @@ import java.util.Objects;
 public class GroupUserKey implements Serializable {
 
     @Column(name = "user_id")
-    private int userId;
+    private Integer userId;
 
     @Column(name = "group_id")
-    private int groupId;
+    private Integer groupId;
 
     public GroupUserKey() {
 

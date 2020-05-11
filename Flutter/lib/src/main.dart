@@ -7,8 +7,9 @@ import 'package:student/src/widgets/login.dart';
 import 'package:student/src/theme/theme.dart';
 
 void main() async {
-  // make sure the theme is loaded before the application displays
   WidgetsFlutterBinding.ensureInitialized();
+
+  // make sure the theme is loaded before the application displays
   final prefs = await SharedPreferences.getInstance();
   final ThemeState themeState = ThemeState(prefs);
 
@@ -16,7 +17,10 @@ void main() async {
   final bool loggedIn = prefs.getBool("loggedIn") ?? false;
   String startPage = loggedIn ? "/main" : "/login";
 
-  runApp(MyApp(themeState: themeState, startPage: startPage,));
+  runApp(MyApp(
+    themeState: themeState,
+    startPage: startPage,
+  ));
 }
 
 class MyApp extends StatelessWidget {
@@ -24,6 +28,7 @@ class MyApp extends StatelessWidget {
   final String startPage;
 
   MyApp({Key key, this.themeState, this.startPage}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(

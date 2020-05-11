@@ -17,7 +17,6 @@ public class TestController {
 
     @GetMapping(path = "/login")
     public String test() {
-        System.out.println("PRINT HALLO");
         return userRepository.findByEmailAddress("Wouter").get().getId().toString();
     }
 

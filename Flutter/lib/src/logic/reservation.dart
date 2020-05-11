@@ -1,5 +1,4 @@
 import 'package:json_annotation/json_annotation.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 part 'reservation.g.dart';
 
@@ -54,5 +53,12 @@ class Reservation {
 
   set date(DateTime value) {
     _date = value;
+  }
+}
+
+extension DateOnlyCompare on DateTime {
+  bool isSameDate(DateTime other) {
+    return this.year == other.year && this.month == other.month
+        && this.day == other.day;
   }
 }

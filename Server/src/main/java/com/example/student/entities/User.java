@@ -5,6 +5,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -27,7 +28,10 @@ public class User implements UserDetails {
     private boolean accountIsEnabled = true;
 
     @OneToMany(mappedBy = "user")
-    Set<GroupUserPermission> groupUserPermissions;
+    Set<GroupUserPermission> groupUserPermissions = new HashSet<>();
+
+    @OneToMany(mappedBy = "user")
+    Set<Reservation> reservations = new HashSet<>();
 
     public User(String emailAddress, String password, boolean accountIsEnabled) {
         this.emailAddress = emailAddress;
@@ -36,7 +40,6 @@ public class User implements UserDetails {
     }
 
     public User() {
-
     }
 
 
@@ -142,5 +145,15 @@ public class User implements UserDetails {
     @Override
     public boolean isEnabled() {
         return this.accountIsEnabled;
+    }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "id=" + id +
+                ", emailAddress='" + emailAddress + '\'' +
+                ", password=******** "+
+                ", accountIsEnabled=" + accountIsEnabled +
+                '}';
     }
 }

@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:student/src/logic/reservation.dart';
 
 class ServerCommunication {
   static String _host = "http://192.168.0.172:8080";
@@ -15,18 +16,19 @@ class ServerCommunication {
     String _auth = "Basic " + base64Encode(utf8.encode("$_user:$_pass"));
     print("Request");
 
-    http.Response _res = await http.get(
-        _url, headers: {HttpHeaders.authorizationHeader : _auth});
+    http.Response _res =
+        await http.get(_url, headers: {HttpHeaders.authorizationHeader: _auth});
     print("Response: " + _res.body.toString());
   }
 
   static Future<http.Response> login(String email, String pass) async {
     String _url = _host + "/login";
     _auth = "Basic " + base64Encode(utf8.encode("$email:$pass"));
-    Map<String,String> _headers = {HttpHeaders.authorizationHeader : _auth};
+    Map<String, String> _headers = {HttpHeaders.authorizationHeader: _auth};
     print(_headers.toString());
 
-    http.Response _res = await http.get(_url, headers: _headers).timeout(Duration(seconds: 5));
+    http.Response _res =
+        await http.get(_url, headers: _headers).timeout(Duration(seconds: 5));
     if (_res.statusCode == 200) {
       // save user info
       saveUserData(email, int.parse(_res.body));
@@ -41,10 +43,19 @@ class ServerCommunication {
     _prefs.setString("header", _auth);
     _prefs.setInt("userId", id);
     _prefs.setBool("loggedIn", true);
-
   }
 
-  static void sendReservation() {
-
+  static void sendReservation(Reservation res) async {
+    String _url = _host + "/reserve";
+    Map<String, String> _headers = {
+      //HttpHeaders.authorizationHeader: _auth,
+      HttpHeaders.contentTypeHeader: "application/json"
+    };
+    http.Response _res = await http
+        .put(_url,
+            headers: _headers,
+            body: jsonEncode(res))
+        .timeout(Duration(seconds: 5));
+    print(_res.statusCode.toString());
   }
 }

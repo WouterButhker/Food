@@ -132,9 +132,10 @@ class Choice extends StatelessWidget {
       children: <Widget>[
         RawMaterialButton(
           onPressed: () {
-            Reservation _res = Reservation("Samballen", DateTime.now(), 1,  amountEating: 1);
+            Reservation _res = Reservation("Bier", DateTime.now(), 1,  amountEating: 1);
             String _json = jsonEncode(_res);
             print(_json);
+            ServerCommunication.sendReservation(_res);
           },
           // alone
           onLongPress: () {},
