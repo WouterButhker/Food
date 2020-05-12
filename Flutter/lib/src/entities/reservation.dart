@@ -22,7 +22,6 @@ class Reservation {
 
   factory Reservation.fromJson(Map<String, dynamic> json) =>
       _$ReservationFromJson(json);
-
   Map<String, dynamic> toJson() => _$ReservationToJson(this);
 
   int get user => _user;

@@ -19,6 +19,9 @@ public class User implements UserDetails {
     @Column(name = "emailAddress", unique = true, nullable = false)
     private String emailAddress;
 
+    @Column(name = "name")
+    private String name;
+
     @Column(name = "password", nullable = false, length = 60)
     private String password;
 
@@ -33,10 +36,11 @@ public class User implements UserDetails {
     @OneToMany(mappedBy = "user")
     Set<Reservation> reservations = new HashSet<>();
 
-    public User(String emailAddress, String password, boolean accountIsEnabled) {
+    public User(String emailAddress, String name, String password, boolean accountIsEnabled) {
         this.emailAddress = emailAddress;
         this.password = password;
         this.accountIsEnabled = accountIsEnabled;
+        this.name = name;
     }
 
     public User() {
@@ -69,6 +73,14 @@ public class User implements UserDetails {
 
     public void setAccountIsEnabled(boolean accountIsEnabled) {
         this.accountIsEnabled = accountIsEnabled;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     /**
@@ -151,7 +163,8 @@ public class User implements UserDetails {
     public String toString() {
         return "User{" +
                 "id=" + id +
-                ", emailAddress='" + emailAddress + '\'' +
+                ", emailAddress='" + emailAddress + "'" +
+                ", name='" + this.name + "'" +
                 ", password=******** "+
                 ", accountIsEnabled=" + accountIsEnabled +
                 '}';

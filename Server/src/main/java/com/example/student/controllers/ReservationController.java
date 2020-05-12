@@ -4,6 +4,9 @@ import com.example.student.entities.Group;
 import com.example.student.entities.Reservation;
 import com.example.student.entities.ReservationKey;
 import com.example.student.entities.User;
+import com.example.student.exceptions.GroupNotFoundException;
+import com.example.student.exceptions.IncorrectDateException;
+import com.example.student.exceptions.UserNotFoundException;
 import com.example.student.repositories.GroupRepository;
 import com.example.student.repositories.ReservationRepository;
 import com.example.student.repositories.UserRepository;
@@ -37,7 +40,12 @@ public class ReservationController {
 
     @PostConstruct
     private void init() {
-
+        User user = new User("Wouter", "Wouter B.", new BCryptPasswordEncoder().encode("123"), true);
+        userRepository.save(user);
+        Group group = new Group("Samballen");
+        groupRepository.save(group);
+        userRepository.flush();
+        groupRepository.flush();
     }
 
 
@@ -46,42 +54,51 @@ public class ReservationController {
         System.out.println(json);
         //Reservation res = new Gson().fromJson(json, Reservation.class);
 
-        //Reservation res = parseReservation(json);
+        Reservation res = parseReservation(json);
         //System.out.println(res);
-//        ReservationKey key =
-//                new ReservationKey(res.getDate(), res.getGroup().getId(), res.getUser().getId());
-        //reservationRepository.save(res);
-
-        User user = new User("Wouter", new BCryptPasswordEncoder().encode("123"), true);
-        userRepository.save(user);
-        Group group = new Group("Group1");
-        groupRepository.save(group);
-        userRepository.flush();
-        groupRepository.flush();
-
-        Group g = groupRepository.findByName("Group1").get();
-        User p = userRepository.findUserById(1);
-
-        Date date = new Date(System.currentTimeMillis());
-        Reservation res = new Reservation(p, g, date, 0, 1);
         reservationRepository.save(res);
+        res = reservationRepository.findAll().get(0);
         System.out.println(res);
+
+
+//        Group g = groupRepository.findByName("Group1").get();
+//        User p = userRepository.findUserById(1);
+//
+//        Date date = new Date(System.currentTimeMillis());
+//        Reservation res = new Reservation(p, g, date, 0, 1);
+//        reservationRepository.save(res);
+//
+//        res = reservationRepository.findAll().get(0);
+//        System.out.println(res);
+//        System.out.println(res.getReservationKey().getMyDate());
 
     }
 
-    private Reservation parseReservation(String json) {
+    private Reservation parseReservation(String json)
+            throws UserNotFoundException, GroupNotFoundException, IncorrectDateException {
         JsonObject obj = new Gson().fromJson(json, JsonObject.class);
-        User w = userRepository.findUserById(obj.get("user").getAsInt());
-        Group g = groupRepository.findByName(obj.get("group").getAsString()).get();
+        int userInt = obj.get("user").getAsInt();
+        String groupStr = obj.get("group").getAsString();
+
+        if (userRepository.findUserById(userInt).isEmpty()) {
+            throw new UserNotFoundException();
+        }
+        if (groupRepository.findByName(groupStr).isEmpty()) {
+            throw new GroupNotFoundException();
+        }
+
+        User user = userRepository.findUserById(userInt).get();
+        Group group = groupRepository.findByName(groupStr).get();
+
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
         Date date = new Date();
         try {
             date = formatter.parse(obj.get("date").getAsString());
         } catch (ParseException e) {
-            e.printStackTrace();
+            throw new IncorrectDateException();
         }
 
-        return new Reservation(w, g,
+        return new Reservation(user, group,
                 date,
                 obj.get("amountCooking").getAsInt(), obj.get("amountEating").getAsInt());
     }

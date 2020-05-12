@@ -20,11 +20,6 @@ public class Reservation {
     @JoinColumn(name = "group_id")
     private Group group;
 
-    @MapsId("myDate")
-    @JoinColumn(name = "my_date")
-    @Temporal(TemporalType.DATE)
-    private Date date;
-
     @Column(name = "amount_cooking")
     private int amountCooking;
 
@@ -35,10 +30,10 @@ public class Reservation {
 
     }
 
-    public Reservation(User user, Group group, Date date, int amountCooking, int amountEating) {
+    public Reservation(User user, Group group, Date my_date, int amountCooking, int amountEating) {
+        this.reservationKey = new ReservationKey(my_date, user.getId(), group.getId());
         this.user = user;
         this.group = group;
-        this.date = date;
         this.amountCooking = amountCooking;
         this.amountEating = amountEating;
     }
@@ -52,13 +47,13 @@ public class Reservation {
                 amountEating == that.amountEating &&
                 Objects.equals(reservationKey, that.reservationKey) &&
                 Objects.equals(user, that.user) &&
-                Objects.equals(group, that.group) &&
-                Objects.equals(date, that.date);
+                Objects.equals(group, that.group);
+                //Objects.equals(my_date, that.my_date);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(reservationKey, user, group, date, amountCooking, amountEating);
+        return Objects.hash(reservationKey, user, group, amountCooking, amountEating);
     }
 
     public ReservationKey getReservationKey() {
@@ -86,11 +81,11 @@ public class Reservation {
     }
 
     public Date getDate() {
-        return date;
+        return this.reservationKey.getMyDate();
     }
 
     public void setDate(Date date) {
-        this.date = date;
+        this.reservationKey.setMyDate(date);
     }
 
     public int getAmountCooking() {
@@ -114,7 +109,7 @@ public class Reservation {
         return "Reservation{" +
                 "user=" + user +
                 ", group=" + group +
-                ", date='" + date + "'" +
+                ", date='" + this.getDate() + "'" +
                 ", amountCooking=" + amountCooking +
                 ", amountEating=" + amountEating +
                 '}';

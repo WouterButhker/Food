@@ -2,9 +2,11 @@ import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart';
 import 'package:student/src/communication/server_communication.dart';
+import 'package:student/src/entities/user.dart';
 import 'package:student/src/icons/chef_hat_icons.dart';
-import 'package:student/src/logic/reservation.dart';
+import 'package:student/src/entities/reservation.dart';
 
 class Food extends StatelessWidget {
   @override
@@ -49,9 +51,9 @@ class DateSelector extends StatelessWidget {
         ),
         Center(
             child: Text(
-          "Vandaag",
-          textScaleFactor: 3,
-        )),
+              "Vandaag",
+              textScaleFactor: 3,
+            )),
         Container(
           child: Expanded(
             child: Center(
@@ -69,7 +71,6 @@ class DateSelector extends StatelessWidget {
 
   void _getDate() {
     DateTime _today = DateTime.now();
-
   }
 }
 
@@ -97,7 +98,7 @@ class People extends StatelessWidget {
         GridTile(
           child: Align(
             child: Text(
-              s
+                s
             ),
             alignment: Alignment.centerLeft,
           ),
@@ -132,10 +133,13 @@ class Choice extends StatelessWidget {
       children: <Widget>[
         RawMaterialButton(
           onPressed: () {
-            Reservation _res = Reservation("Bier", DateTime.now(), 1,  amountEating: 1);
+            Reservation _res = Reservation(
+                "Samballen", DateTime.now(), 1, amountEating: 1);
             String _json = jsonEncode(_res);
             print(_json);
-            ServerCommunication.sendReservation(_res);
+            ServerCommunication.sendReservation(_res).then((val) {
+              print(val.statusCode);
+            });
           },
           // alone
           onLongPress: () {},
@@ -149,7 +153,18 @@ class Choice extends StatelessWidget {
           elevation: 2,
         ),
         RawMaterialButton(
-          onPressed: () {},
+          onPressed: () {
+            User user = new User("p@inda", "Pinda", "pass");
+            ServerCommunication.register(user).then((res) {
+              if (res.statusCode == 200) {
+
+              } else {
+              Map<String, dynamic> json = jsonDecode(res.body);
+              print("Error " + res.statusCode.toString() + ": " + json["message"]);
+
+              }
+            });
+          },
           child: Icon(
             Icons.close,
             color: Colors.white,
@@ -159,7 +174,9 @@ class Choice extends StatelessWidget {
           elevation: 2,
         ),
         RawMaterialButton(
-          onPressed: () {},
+          onPressed: () {
+            ServerCommunication.addGroup("BIERR");
+          },
           child: Icon(
             ChefHat.cooking_chef_cap,
             color: Colors.white,
@@ -195,4 +212,6 @@ class Choice extends StatelessWidget {
       ],
     );
   }
+
+
 }
