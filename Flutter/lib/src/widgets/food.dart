@@ -3,7 +3,9 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
+import 'package:student/src/communication/database_communication.dart';
 import 'package:student/src/communication/server_communication.dart';
+import 'package:student/src/controllers/food_controller.dart';
 import 'package:student/src/entities/user.dart';
 import 'package:student/src/icons/chef_hat_icons.dart';
 import 'package:student/src/entities/reservation.dart';
@@ -133,13 +135,7 @@ class Choice extends StatelessWidget {
       children: <Widget>[
         RawMaterialButton(
           onPressed: () {
-            Reservation _res = Reservation(
-                "Samballen", DateTime.now(), 1, amountEating: 1);
-            String _json = jsonEncode(_res);
-            print(_json);
-            ServerCommunication.sendReservation(_res).then((val) {
-              print(val.statusCode);
-            });
+            FoodController.yes();
           },
           // alone
           onLongPress: () {},
@@ -154,16 +150,7 @@ class Choice extends StatelessWidget {
         ),
         RawMaterialButton(
           onPressed: () {
-            User user = new User("p@inda", "Pinda", "pass");
-            ServerCommunication.register(user).then((res) {
-              if (res.statusCode == 200) {
-
-              } else {
-              Map<String, dynamic> json = jsonDecode(res.body);
-              print("Error " + res.statusCode.toString() + ": " + json["message"]);
-
-              }
-            });
+           FoodController.no();
           },
           child: Icon(
             Icons.close,
@@ -175,7 +162,7 @@ class Choice extends StatelessWidget {
         ),
         RawMaterialButton(
           onPressed: () {
-            ServerCommunication.addGroup("BIERR");
+            FoodController.cook();
           },
           child: Icon(
             ChefHat.cooking_chef_cap,
@@ -186,7 +173,9 @@ class Choice extends StatelessWidget {
           elevation: 2,
         ),
         RawMaterialButton(
-          onPressed: () {},
+          onPressed: () {
+            FoodController.maybe();
+          },
           child: Text(
             "?",
             style: TextStyle(
@@ -200,7 +189,10 @@ class Choice extends StatelessWidget {
           elevation: 2,
         ),
         RawMaterialButton(
-          onPressed: () {},
+          onPressed: () {
+            // TODO: add popup
+            FoodController.custom(0, 0);
+          },
           child: Text(
             "...",
             style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),

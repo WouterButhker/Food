@@ -1,9 +1,10 @@
 import 'package:json_annotation/json_annotation.dart';
+import 'package:student/src/entities/database_item.dart';
 
 part 'reservation.g.dart';
 
 @JsonSerializable()
-class Reservation {
+class Reservation extends DatabaseItem {
   DateTime _date;
   String _group;
   int _amountEating;
@@ -52,6 +53,11 @@ class Reservation {
 
   set date(DateTime value) {
     _date = value;
+  }
+
+  @override
+  Future addToDatabase() {
+    return super.addToDatabaseByName("reservations");
   }
 }
 

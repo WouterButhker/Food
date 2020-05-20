@@ -1,6 +1,10 @@
 
 
-class Group {
+import 'package:sqflite/sqflite.dart';
+import 'package:student/src/communication/database_communication.dart';
+import 'package:student/src/entities/database_item.dart';
+
+class Group extends DatabaseItem {
 
   String _name;
   int _id;
@@ -12,9 +16,23 @@ class Group {
   : _id = json["id"],
   _name = json["name"];
 
+  static Group getFromJson(Map<String, dynamic> json) {
+    return Group.fromJson(json);
+  }
+
   Map<String, dynamic> toJson() => {
     'id' : _id,
     'name' : _name
   };
 
+  Future addToDatabase() async {
+    return super.addToDatabaseByName("user_groups");
+  }
+
+  @override
+  String toString() {
+    return 'Group{_name: $_name, _id: $_id}';
+  }
+
+  int get id => _id;
 }

@@ -12,7 +12,14 @@ class ServerCommunication {
   static String _host = "http://192.168.0.172:8080";
   static String _auth;
 
-  static void authenticatedGet(String url) async {
+  static Future<String> _getAuth() async {
+    if (_auth != null) return _auth;
+    final _pref = await SharedPreferences.getInstance();
+    _auth = _pref.get("header");
+    return _auth;
+  }
+
+  static Future<http.Response> authenticatedGet(String url) async {
     String _url = _host + url;
     String _user = "Wouter";
     String _pass = "123";
@@ -20,14 +27,15 @@ class ServerCommunication {
     print("Request");
 
     http.Response _res =
-        await http.get(_url, headers: {HttpHeaders.authorizationHeader: _auth});
+        await http.get(_url, headers: {HttpHeaders.authorizationHeader: await _getAuth()});
     print("Response: " + _res.body.toString());
+    return _res;
   }
 
   static Future<http.Response> authenticatedPost(String url, Object obj) async {
     String _url = _host + url;
     Map<String, String> _headers = {
-      HttpHeaders.authorizationHeader: _auth,
+      HttpHeaders.authorizationHeader: await _getAuth(),
       HttpHeaders.contentTypeHeader: "application/json"
     };
     print("Making post request to " + url + " With body: '" + jsonEncode(obj) + "'");
@@ -41,10 +49,10 @@ class ServerCommunication {
   static Future<http.Response> authenticatedPut(String url, Object obj) async {
     String _url = _host + url;
     Map<String, String> _headers = {
-      HttpHeaders.authorizationHeader: _auth,
+      HttpHeaders.authorizationHeader: await _getAuth(),
       HttpHeaders.contentTypeHeader: "application/json"
     };
-    print("Making post request to " + url + " With body: '" + jsonEncode(obj) + "'");
+    print("Making post request to " + url + " With body: '" + jsonEncode(obj) + "' and headers: " + _headers.toString());
     return await http
         .put(_url,
         headers: _headers,
@@ -89,4 +97,13 @@ class ServerCommunication {
     Group group = new Group.onlyName(name);
     return await authenticatedPost("/groups/add", group);
   }
+
+  static Future<List<Reservation>> getAllReservations(int groupId) async {
+     await authenticatedGet("/reservations/all?groupId=" + groupId.toString());
+  }
+  
+  static Future<http.Response> getUsersFromGroup(int groupId) async{
+    return await authenticatedGet("/users/get");
+  }
+
 }
