@@ -27,6 +27,7 @@ public class GroupUserPermission {
     }
 
     public GroupUserPermission(User user, Group group, String userRole) {
+        this.id = new GroupUserKey(user.getId(), group.getId());
         this.user = user;
         this.group = group;
         this.userRole = userRole;

@@ -2,7 +2,6 @@ package com.example.student.controllers;
 
 import com.example.student.entities.Group;
 import com.example.student.entities.Reservation;
-import com.example.student.entities.ReservationKey;
 import com.example.student.entities.User;
 import com.example.student.exceptions.GroupNotFoundException;
 import com.example.student.exceptions.IncorrectDateException;
@@ -15,15 +14,13 @@ import com.google.gson.JsonObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.PostConstruct;
-import java.awt.*;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
 @RestController
@@ -58,7 +55,7 @@ public class ReservationController {
         //System.out.println(res);
         reservationRepository.save(res);
         res = reservationRepository.findAll().get(0);
-        System.out.println(res);
+        System.out.println(reservationRepository.findAll().toString());
 
 
 //        Group g = groupRepository.findByName("Group1").get();
@@ -72,6 +69,12 @@ public class ReservationController {
 //        System.out.println(res);
 //        System.out.println(res.getReservationKey().getMyDate());
 
+    }
+
+    @GetMapping(path = "/reservations/all")
+    List<Reservation> getAllReservations(@RequestParam int groupId) {
+
+        return reservationRepository.findAllByReservationKeyGroupId(groupId);
     }
 
     private Reservation parseReservation(String json)
