@@ -65,6 +65,7 @@ class FoodController {
   }
 
   static void custom(int amountEating, int amountCooking) {
-    DatabaseCommunication.reCreateDatabase();
+    //DatabaseCommunication.reCreateDatabase();
+    ServerCommunication.authenticatedGet("/mail");
   }
 }

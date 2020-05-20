@@ -34,6 +34,8 @@ dependencies {
 	testImplementation 'org.springframework.security:spring-security-test'
 
 	testImplementation('junit:junit:4.13')
+
+	compile 'com.sendgrid:sendgrid-java:4.0.1'
 }
 
 test {
