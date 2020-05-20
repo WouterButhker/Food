@@ -34,7 +34,6 @@ public class TestController {
         Content content = new Content("text/plain", "Hoi Wouter");
         Mail mail = new Mail(from, subject, to, content);
 
-        // TODO: REMOVE API KEY
 
         SendGrid sendGrid = new SendGrid(key);
         Request request = new Request();
