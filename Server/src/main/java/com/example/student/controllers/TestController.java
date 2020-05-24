@@ -28,29 +28,7 @@ public class TestController {
     @GetMapping(path = "/mail")
     public String mail() {
         //System.out.println(key);
-        Email from = new Email("wouterbuthker@gmail.com");
-        Email to = new Email("wouterbuthker@live.nl");
-        String subject = "Subject";
-        Content content = new Content("text/plain", "Hoi Wouter");
-        Mail mail = new Mail(from, subject, to, content);
-
-
-        SendGrid sendGrid = new SendGrid(key);
-        Request request = new Request();
-
-        try {
-            request.setMethod(Method.POST);
-            request.setEndpoint("mail/send");
-            request.setBody(mail.build());
-
-            Response res = sendGrid.api(request);
-            System.out.println(res.getStatusCode());
-            System.out.println(res.getBody());
-            System.out.println(res.getHeaders());
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        System.out.println("/mail");
 
         return "";
     }

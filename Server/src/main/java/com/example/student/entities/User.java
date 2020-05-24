@@ -28,7 +28,7 @@ public class User implements UserDetails {
     // TODO Roles
 
     @Column(name = "enabled")
-    private boolean accountIsEnabled = true;
+    private boolean accountIsEnabled = false;
 
     @OneToMany(mappedBy = "user")
     Set<GroupUserPermission> groupUserPermissions = new HashSet<>();

@@ -35,15 +35,15 @@ public class ReservationController {
     @Autowired
     ReservationRepository reservationRepository;
 
-    @PostConstruct
-    private void init() {
-        User user = new User("Wouter", "Wouter B.", new BCryptPasswordEncoder().encode("123"), true);
-        userRepository.save(user);
-        Group group = new Group("Samballen");
-        groupRepository.save(group);
-        userRepository.flush();
-        groupRepository.flush();
-    }
+//    @PostConstruct
+//    private void init() {
+//        User user = new User("Wouter", "Wouter B.", new BCryptPasswordEncoder().encode("123"), true);
+//        userRepository.save(user);
+//        Group group = new Group("Samballen");
+//        groupRepository.save(group);
+//        userRepository.flush();
+//        groupRepository.flush();
+//    }
 
 
     @PutMapping(path = "/reserve", consumes = MediaType.APPLICATION_JSON_VALUE)

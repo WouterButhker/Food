@@ -23,9 +23,11 @@ class FoodController {
     User user = new User("p@inda", "Pinda", "pass");
     ServerCommunication.register(user).then((res) {
       if (res.statusCode == 200) {
+      } else if (res.statusCode == 403) {
+        print("Not authorized");
       } else {
-        Map<String, dynamic> json = jsonDecode(res.body);
-        print("Error " + res.statusCode.toString() + ": " + json["message"]);
+       // Map<String, dynamic> json = jsonDecode(res.body);
+        print("Error " + res.statusCode.toString()); //+ ": " + json["message"]);
       }
     });
 //            DatabaseCommunication.initDatabase().then((db) {
@@ -48,7 +50,6 @@ class FoodController {
     print(group);
     group.addToDatabase();
 
-
     List<Group> groups = await DatabaseCommunication.getAllGroupsFromUser();
     int id = groups.elementAt(0).id;
     var response = await ServerCommunication.getUsersFromGroup(id);
@@ -62,6 +63,9 @@ class FoodController {
 
   static void maybe() {
     ServerCommunication.getAllReservations(1);
+    ServerCommunication.authenticatedPut(
+        "/users/register/confirm?token=1e0c3ecf-eb84-4c30-91c7-555e44202f7a",
+        null);
   }
 
   static void custom(int amountEating, int amountCooking) {

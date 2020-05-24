@@ -9,7 +9,7 @@ import 'package:student/src/entities/reservation.dart';
 import 'package:student/src/entities/user.dart';
 
 class ServerCommunication {
-  static String _host = "http://192.168.0.172:8080";
+  static String _host = "http://192.168.0.173:8080";
   static String _auth;
 
   static Future<String> _getAuth() async {
@@ -28,7 +28,7 @@ class ServerCommunication {
 
     http.Response _res =
         await http.get(_url, headers: {HttpHeaders.authorizationHeader: await _getAuth()});
-    print("Response: " + _res.body.toString());
+    print("Response " + _res.statusCode.toString() + ': ' +  _res.body.toString());
     return _res;
   }
 
@@ -90,7 +90,7 @@ class ServerCommunication {
   }
 
   static Future<http.Response> register(User user) async {
-    return await authenticatedPost("/users/add", user);
+    return await authenticatedPost("/users/register", user);
   }
 
   static Future<http.Response> addGroup(String name) async {

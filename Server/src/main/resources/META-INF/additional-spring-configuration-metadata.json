@@ -1,4 +1,8 @@
 {
   "properties": [
-
+    {
+      "name": "SENDGRID_API_KEY",
+      "type": "java.lang.String",
+      "description": "API key for Sendgrid."
+    }
   ] }
