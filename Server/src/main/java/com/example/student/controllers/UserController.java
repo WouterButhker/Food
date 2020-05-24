@@ -26,6 +26,7 @@ import java.net.http.HttpResponse;
 import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 @RestController
@@ -53,7 +54,7 @@ public class UserController {
             User user = userRepository.save(parseUser(json));
             System.out.println("New user registered: " + user);
 
-            String url = request.getContextPath();
+            String url = request.getRequestURL().toString();
             eventPublisher.publishEvent(new OnRegistrationCompleteEvent(user, url));
 
             return user;
@@ -67,6 +68,7 @@ public class UserController {
     String confirmRegistration(@RequestParam String token) {
         VerificationToken verificationToken = verificationTokenRepository.findByToken(token);
         if (verificationToken == null) {
+            System.out.println("Token is null");
             throw new VerificationFailedException();
         }
 
@@ -76,6 +78,7 @@ public class UserController {
 
         if (timeToVerifyLeft < 0) {
             // TODO custom exception
+            System.out.println("Time left to verify is " + new Date(timeToVerifyLeft).toString());
             throw new VerificationFailedException();
         }
 

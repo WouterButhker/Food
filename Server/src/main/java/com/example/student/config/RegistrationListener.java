@@ -13,6 +13,7 @@ import org.springframework.stereotype.Component;
 import java.util.Date;
 import java.util.UUID;
 
+// TODO: refactor
 @Component
 public class RegistrationListener implements ApplicationListener<OnRegistrationCompleteEvent> {
 
@@ -40,12 +41,12 @@ public class RegistrationListener implements ApplicationListener<OnRegistrationC
         // Email email = new Email(user.getEmail());
         Email email = new Email("wouterbuthker@live.nl");
         String subject = "Confirm registration";
-        String confirmationUrl = event.getAppUrl() + "/users/register/confirm?token=" + token;
+        String confirmationUrl = event.getAppUrl() + "/confirm?token=" + token;
         String emailMessage = "Confirm your registration by clicking the following link\n" + confirmationUrl;
         Content content = new Content("text/plain", emailMessage);
 
         System.out.println("Sending mail to confirm registration");
-        mailController.sendMail(email, subject, content);
+        mailController.sendTemplateMail(confirmationUrl);
 
     }
 }

@@ -90,7 +90,10 @@ class ServerCommunication {
   }
 
   static Future<http.Response> register(User user) async {
-    return await authenticatedPost("/users/register", user);
+    return await http.post(_host + "/users/register", headers:
+    {HttpHeaders.contentTypeHeader: "application/json"},
+        body: jsonEncode(user));
+    //return await authenticatedPost("/users/register", user);
   }
 
   static Future<http.Response> addGroup(String name) async {
