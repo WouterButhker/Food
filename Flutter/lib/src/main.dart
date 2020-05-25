@@ -5,6 +5,7 @@ import 'package:student/src/widgets/mainscreen.dart';
 import 'package:student/src/widgets/food.dart';
 import 'package:student/src/widgets/login.dart';
 import 'package:student/src/theme/theme.dart';
+import 'package:student/src/widgets/register.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -16,6 +17,7 @@ void main() async {
   // check if user has logged in before to determine the start page
   final bool loggedIn = prefs.getBool("loggedIn") ?? false;
   String startPage = loggedIn ? "/main" : "/login";
+  // String startPage = prefs.getBool("loggedIn") ?? false ? "/main" : "/login"
 
   runApp(MyApp(
     themeState: themeState,
@@ -42,6 +44,7 @@ class MyApp extends StatelessWidget {
                 '/login': (context) => Login(),
                 '/main': (context) => MainScreen(),
                 '/food': (context) => Food(),
+                '/register': (context) => Register(),
               },
               theme: theme.theme);
         },

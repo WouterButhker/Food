@@ -1,7 +1,10 @@
 package com.example.student.controllers;
 
-import com.example.student.config.DynamicTemplatePersonalization;
 import com.sendgrid.*;
+import com.sendgrid.helpers.mail.Mail;
+import com.sendgrid.helpers.mail.objects.Content;
+import com.sendgrid.helpers.mail.objects.Email;
+import com.sendgrid.helpers.mail.objects.Personalization;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -24,7 +27,7 @@ public class MailController {
         Email from = new Email("wouterbuthker@gmail.com");
         String subject = "Welcome";
         Email to = new Email("wouterbuthker@live.nl");
-        DynamicTemplatePersonalization personalization = new DynamicTemplatePersonalization();
+        Personalization personalization = new Personalization();
         personalization.addTo(to);
         personalization.setSubject(subject);
         personalization.addDynamicTemplateData("link", link);

@@ -74,9 +74,10 @@ class Buttons extends StatelessWidget {
             child: Text("Add item"),
             onPressed: () {
               //TODO
-              Provider.of<GroupModel>(context, listen: false)
-                  .addGroup("Group " + g.toString());
-              g++;
+//              Provider.of<GroupModel>(context, listen: false)
+//                  .addGroup("Group " + g.toString());
+//              g++;
+              Navigator.pushNamed(context, '/register');
             },
           ),
           margin: EdgeInsets.all(5),
