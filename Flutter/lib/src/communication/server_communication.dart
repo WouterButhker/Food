@@ -1,8 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
-
-import 'package:flutter/animation.dart';
 import 'package:http/http.dart' as http;
+import 'package:http/http.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:student/src/entities/group.dart';
 import 'package:student/src/entities/reservation.dart';
@@ -12,67 +11,91 @@ class ServerCommunication {
   static String _host = "http://192.168.0.173:8080";
   static String _auth;
 
-  static Future<String> getAuth() async {
+  static Future<String> _getAuth() async {
     if (_auth != null) return _auth;
     final _pref = await SharedPreferences.getInstance();
     _auth = _pref.get("header");
     return _auth;
   }
 
-  static Future<http.Response> authenticatedGet(String url) async {
+  /// Generates the authentication header and saves it in memory and shared preferences
+  static void setAuthHeader(String email, String pass) async {
+    _auth = "Basic " + base64Encode(utf8.encode("$email:$pass"));
+    final _prefs = await SharedPreferences.getInstance();
+    _prefs.setString("header", _auth);
+  }
+
+  static Future<http.Response> _authenticatedGet(String url) async {
     String _url = _host + url;
-    String _user = "Wouter";
-    String _pass = "123";
-    String _auth = "Basic " + base64Encode(utf8.encode("$_user:$_pass"));
-    print("Request");
+
+    print("GET Request to " + _url);
 
     http.Response _res =
-        await http.get(_url, headers: {HttpHeaders.authorizationHeader: await getAuth()});
+        await http.get(_url, headers: {HttpHeaders.authorizationHeader: await _getAuth()});
     print("Response " + _res.statusCode.toString() + ': ' +  _res.body.toString());
     return _res;
   }
 
-  static Future<http.Response> authenticatedPost(String url, Object obj) async {
+  static Future<http.Response> _authenticatedPost(String url, Object obj) async {
     String _url = _host + url;
     Map<String, String> _headers = {
-      HttpHeaders.authorizationHeader: await getAuth(),
+      HttpHeaders.authorizationHeader: await _getAuth(),
       HttpHeaders.contentTypeHeader: "application/json"
     };
-    print("Making post request to " + url + " With body: '" + jsonEncode(obj) + "'");
-    return await http
+    String json = jsonEncode(obj);
+
+    print("POST request to " + url + " With body: '" + json + "'");
+    Response _res =  await http
         .post(_url,
         headers: _headers,
-        body: jsonEncode(obj))
+        body: json)
         .timeout(Duration(seconds: 5));
+    print("Response " + _res.statusCode.toString() + ': ' +  _res.body.toString());
+    return _res;
   }
 
-  static Future<http.Response> authenticatedPut(String url, Object obj) async {
+  static Future<http.Response> _authenticatedPut(String url, Object obj) async {
     String _url = _host + url;
     Map<String, String> _headers = {
-      HttpHeaders.authorizationHeader: await getAuth(),
+      HttpHeaders.authorizationHeader: await _getAuth(),
       HttpHeaders.contentTypeHeader: "application/json"
     };
-    print("Making post request to " + url + " With body: '" + jsonEncode(obj) + "' and headers: " + _headers.toString());
-    return await http
+    String json = jsonEncode(obj);
+
+    print("POST request to " + url + " With body: '" + json);
+    Response _res = await http
         .put(_url,
         headers: _headers,
-        body: jsonEncode(obj))
+        body: json)
         .timeout(Duration(seconds: 5));
+    print("Response " + _res.statusCode.toString() + ': ' +  _res.body.toString());
+    return _res;
+  }
+
+  static Future<http.Response> _authenticatedDelete(String url) async {
+    String _url = _host + url;
+    Map<String, String> _headers = {
+      HttpHeaders.authorizationHeader: await _getAuth(),
+      HttpHeaders.contentTypeHeader: "application/json"
+    };
+
+    print("DELETE request to " + url);
+    Response _res = await http
+        .delete(_url,
+        headers: _headers)
+        .timeout(Duration(seconds: 5));
+    print("Response " + _res.statusCode.toString() + ': ' +  _res.body.toString());
+    return _res;
   }
 
 
-  static Future<http.Response> login(String email, String pass) async {
-    String _url = _host + "/login";
-    _auth = "Basic " + base64Encode(utf8.encode("$email:$pass"));
-    Map<String, String> _headers = {HttpHeaders.authorizationHeader: _auth};
-    print(_headers.toString());
-    return await http.get(_url, headers: _headers).timeout(Duration(seconds: 5));
+
+  static Future<http.Response> getUserId() async {
+    return await _authenticatedGet("/users/login");
   }
-
-
 
   static Future<http.Response> sendReservation(Reservation res) async {
-    return await authenticatedPut("/reserve", res);
+    return await _authenticatedPut("/reserve", res);
   }
 
   static Future<http.Response> register(User user) async {
@@ -84,15 +107,15 @@ class ServerCommunication {
 
   static Future<http.Response> addGroup(String name) async {
     Group group = new Group.onlyName(name);
-    return await authenticatedPost("/groups/add", group);
+    return await _authenticatedPost("/groups/add", group);
   }
 
   static Future<List<Reservation>> getAllReservations(int groupId) async {
-     await authenticatedGet("/reservations/all?groupId=" + groupId.toString());
+     await _authenticatedGet("/reservations/all?groupId=" + groupId.toString());
   }
   
   static Future<http.Response> getUsersFromGroup(int groupId) async{
-    return await authenticatedGet("/users/get");
+    return await _authenticatedGet("/users/get");
   }
 
 }

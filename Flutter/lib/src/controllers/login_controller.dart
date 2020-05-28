@@ -46,24 +46,24 @@ class LoginController {
     }
   }
 
-  static void _saveUserData(String email, int id, String authHeader) async {
+  static void _saveUserData(String email, int id) async {
     final _prefs = await SharedPreferences.getInstance();
 
     _prefs.setString("email", email);
-    _prefs.setString("header", authHeader);
     _prefs.setInt("userId", id);
     _prefs.setBool("loggedIn", true);
   }
 
   static void login(String email, String pass) async {
-    Response res = await ServerCommunication.login(email, pass);
+    ServerCommunication.setAuthHeader(email, pass);
+
+    Response res = await ServerCommunication.getUserId();
 
     if (res.statusCode != 200) {
       throw new Exception("Failed to login");
     }
     int id = int.parse(res.body.toString());
-    String authHeader = await ServerCommunication.getAuth();
-    _saveUserData(email, id, authHeader);
+    _saveUserData(email, id);
   }
 
 }

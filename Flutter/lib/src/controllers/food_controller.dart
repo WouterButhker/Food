@@ -63,13 +63,10 @@ class FoodController {
 
   static void maybe() {
     ServerCommunication.getAllReservations(1);
-    ServerCommunication.authenticatedPut(
-        "/users/register/confirm?token=1e0c3ecf-eb84-4c30-91c7-555e44202f7a",
-        null);
   }
 
   static void custom(int amountEating, int amountCooking) {
     //DatabaseCommunication.reCreateDatabase();
-    ServerCommunication.authenticatedGet("/mail");
+    //ServerCommunication.authenticatedGet("/mail");
   }
 }

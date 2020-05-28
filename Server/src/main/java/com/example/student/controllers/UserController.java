@@ -6,6 +6,8 @@ import com.example.student.entities.GroupUserPermission;
 import com.example.student.entities.User;
 import com.example.student.entities.VerificationToken;
 import com.example.student.exceptions.AlreadyExistsException;
+import com.example.student.exceptions.GroupNotFoundException;
+import com.example.student.exceptions.UserNotFoundException;
 import com.example.student.exceptions.VerificationFailedException;
 import com.example.student.repositories.GroupRepository;
 import com.example.student.repositories.GroupUserPermissionRepository;
@@ -22,8 +24,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
-import java.net.http.HttpResponse;
-import java.sql.SQLIntegrityConstraintViolationException;
+import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -97,23 +98,38 @@ public class UserController {
         return new User(email, name, pass, false);
     }
 
+    /**
+     * gets all users from a specific group
+     * @param groupId the groupId to get the users from
+     * @return a List of users
+     */
     @GetMapping(path = "/getFromGroup")
     List<User> getFromGroup(@RequestParam int groupId) {
+        if (groupRepository.findById(groupId).isEmpty()) throw new GroupNotFoundException();
+
         Group group = groupRepository.findById(groupId).get();
         List<GroupUserPermission> list =  groupUserPermissionRepository.findAllByGroup(group);
+
         List<User> users = new ArrayList<>();
         list.forEach((GroupUserPermission i) -> users.add(i.getUser()));
         return users;
     }
 
-    @GetMapping(path = "/get")
-    User getTemp() {
-        return userRepository.getOne(1);
+    @DeleteMapping(path = "/delete")
+    User deleteUser(Principal principal) {
+        User user = userRepository.findByEmailAddress(principal.getName());
+        userRepository.delete(user);
+        return user;
     }
 
-//    @DeleteMapping(path = "/delete")
-//    static User deleteUser(User user) {
-//        userRepository.delete(user);
-//        return user;
-//    }
+    @GetMapping(path = "/login")
+    int getUserId(Principal principal) {
+        String email = principal.getName();
+
+        if (userRepository.existsByEmailAddress(email)) {
+            User u = userRepository.findByEmailAddress(email);
+            return u.getId();
+        }
+        throw new UserNotFoundException();
+    }
 }

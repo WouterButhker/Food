@@ -56,32 +56,19 @@ class DatabaseCommunication {
   }
   
   static Future<List<User>> getAllUsers() async {
-//    Database db = await getDatabase();
-//    List<Map<String, dynamic>> list = await db.query("users");
-//    List<User> out;
-//    list.map((user) => out.add(User.fromJson(user)));
-//    return out;
-
-  List list = await getAllFromDatabase("users", User.getFromJson);
-  return List<User>.from(list);
+    Database db = await getDatabase();
+    List<Map<String, dynamic>> list = await db.query("users");
+    List<User> out = List<User>.from(list.map((item) => User.fromJson(item)));
+    return out;
   }
 
   static Future<List<Group>> getAllGroupsFromUser() async {
-//    Database db = await getDatabase();
-//    List<Map<String, dynamic>> list = await db.query('groups');
-//    List<Group> out = List<Group>.from(list.map((item) => Group.fromJson(item)));
-//    return out;
-    List<dynamic> list = await getAllFromDatabase('user_groups', Group.getFromJson);
-    List<Group> groups = List<Group>.from(list);
-    return groups;
-  }
-
-  static Future<List> getAllFromDatabase(String table, Function(Map<String, dynamic>) constructor) async {
     Database db = await getDatabase();
-    List<Map<String, dynamic>> list = await db.query(table);
-    List out = List.from(list.map((item) => constructor(item)));
+    List<Map<String, dynamic>> list = await db.query('groups');
+    List<Group> out = List<Group>.from(list.map((item) => Group.fromJson(item)));
     return out;
   }
+
 
 
 
