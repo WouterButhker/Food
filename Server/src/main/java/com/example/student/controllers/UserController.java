@@ -110,4 +110,10 @@ public class UserController {
     User getTemp() {
         return userRepository.getOne(1);
     }
+
+//    @DeleteMapping(path = "/delete")
+//    static User deleteUser(User user) {
+//        userRepository.delete(user);
+//        return user;
+//    }
 }

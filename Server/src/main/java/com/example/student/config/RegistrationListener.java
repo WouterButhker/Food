@@ -4,7 +4,6 @@ import com.example.student.controllers.MailController;
 import com.example.student.entities.User;
 import com.example.student.entities.VerificationToken;
 import com.example.student.repositories.VerificationTokenRepository;
-import com.sendgrid.helpers.mail.objects.Content;
 import com.sendgrid.helpers.mail.objects.Email;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
@@ -21,8 +20,7 @@ public class RegistrationListener implements ApplicationListener<OnRegistrationC
     private VerificationTokenRepository verificationTokenRepository;
 
     @Autowired
-    MailController mailController;
-
+    private MailController mailController;
     /**
      * Handle an application event.
      *
@@ -39,14 +37,11 @@ public class RegistrationListener implements ApplicationListener<OnRegistrationC
         verificationTokenRepository.save(new VerificationToken(token, user));
 
         // Email email = new Email(user.getEmail());
-        Email email = new Email("wouterbuthker@live.nl");
-        String subject = "Confirm registration";
         String confirmationUrl = event.getAppUrl() + "/confirm?token=" + token;
-        String emailMessage = "Confirm your registration by clicking the following link\n" + confirmationUrl;
-        Content content = new Content("text/plain", emailMessage);
 
         System.out.println("Sending mail to confirm registration");
-        mailController.sendTemplateMail(confirmationUrl);
+        Email email = new Email(user.getEmailAddress());
+        mailController.sendTemplateMail(confirmationUrl, email);
 
     }
 }

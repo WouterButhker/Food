@@ -28,9 +28,11 @@ public class VerificationToken {
 
     private Date calcExpiryDate(int expiryTimeInMinutes) {
         Calendar calendar = Calendar.getInstance();
-        calendar.setTime(new Timestamp(calendar.getTime().getTime()));
+        //calendar.setTime(new Timestamp(calendar.getTime().getTime()));
+        System.out.println("current time: " + calendar.getTime().toString());
         calendar.add(Calendar.MINUTE, expiryTimeInMinutes);
-        return new Date(calendar.getTime().getTime());
+        System.out.println("expiry time: " + calendar.getTime().toString());
+        return calendar.getTime();
     }
 
     public VerificationToken(String token, User user) {

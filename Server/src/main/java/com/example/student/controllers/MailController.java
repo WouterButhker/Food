@@ -1,10 +1,12 @@
 package com.example.student.controllers;
 
+import com.example.student.repositories.UserRepository;
 import com.sendgrid.*;
 import com.sendgrid.helpers.mail.Mail;
 import com.sendgrid.helpers.mail.objects.Content;
 import com.sendgrid.helpers.mail.objects.Email;
 import com.sendgrid.helpers.mail.objects.Personalization;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -17,19 +19,18 @@ public class MailController {
     @Value("${SENDGRID_REGISTRATION_TEMPLATE}")
     private String template;
 
-    private SendGrid sendGrid;
+    @Autowired
+    private UserRepository userRepository;
 
-    public MailController() {
-        this.sendGrid = new SendGrid(key);
-    }
 
-    public void sendTemplateMail(String link) {
+    public void sendTemplateMail(String link, Email to) {
         Email from = new Email("wouterbuthker@gmail.com");
-        String subject = "Welcome";
-        Email to = new Email("wouterbuthker@live.nl");
+        from.setName("Woutertje");
+        //to = new Email("wouterbuthker@live.nl"); // TODO remove
+
+
         Personalization personalization = new Personalization();
         personalization.addTo(to);
-        personalization.setSubject(subject);
         personalization.addDynamicTemplateData("link", link);
 
         Mail mail = new Mail();
@@ -47,40 +48,22 @@ public class MailController {
 
             Response res = new SendGrid(key).api(request);
 
-            System.out.println(res.getStatusCode());
-            System.out.println(res.getHeaders());
+            System.out.println("Mail sent to " + to.getEmail());
+            System.out.println("Response: " + res.getStatusCode());
+
+
+            if (res.getStatusCode() != 202) {
+                System.out.println("Body: " + res.getBody());
+                String s = "failed to send mail, deleting user ";
+                boolean b = userRepository.deleteByEmailAddress(to.getEmail());
+                System.out.println(s + b );
+            }
 
         } catch (Exception e) {
             e.printStackTrace();
         }
-    }
-
-    public void sendMail(Email to, String subject, String link, Content content) {
-        Email from = new Email("wouterbuthker@gmail.com");
-        //Email to = new Email("wouterbuthker@live.nl");
-        //String subject = "Subject";
-        //Content content = new Content("text/plain", "Hoi Wouter");
-        Mail mail = new Mail(from, subject, to, content);
-        //mail.setTemplateId(template);
 
 
-
-        Request request = new Request();
-
-        try {
-            request.setMethod(Method.POST);
-            request.setEndpoint("mail/send");
-            request.setBody(mail.build());
-
-
-            Response res = new SendGrid(key).api(request);
-
-            System.out.println(res.getStatusCode());
-            System.out.println(res.getHeaders());
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }
 }
 
