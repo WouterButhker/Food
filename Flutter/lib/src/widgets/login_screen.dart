@@ -3,8 +3,10 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:student/src/communication/server_communication.dart';
+import 'package:student/src/controllers/login_controller.dart';
 
-class Login extends StatelessWidget {
+// ignore: must_be_immutable
+class LoginScreen extends StatelessWidget {
   final _formKey = GlobalKey<FormState>();
   final FocusNode _emailNode = FocusNode();
   final FocusNode _passNode = FocusNode();
@@ -45,27 +47,25 @@ class Login extends StatelessWidget {
   void _login(context) {
     if (_formKey.currentState.validate()) {
       _formKey.currentState.save();
-      ServerCommunication.login(_email, _password).then((val) {
-        print("body: " + val.statusCode.toString());
-        //print("status: " + val.statusCode.toString());
-      }).catchError((error) {
-        print("ERROR: " + error.toString());
-      });
+      LoginController.login(_email, _password);
 
       //ServerCommunication.authenticatedGet("/");
-      
+
       //print(_res.statusCode);
       Navigator.pushReplacementNamed(context, "/main");
     }
   }
 
-
-
   Widget _emailInput(context) {
     return TextFormField(
       decoration:
           InputDecoration(labelText: "Email address", alignLabelWithHint: true),
-      //validator: _validateEmail,
+      validator: (email) {
+        if (email.isEmpty) {
+          return "Please enter an email";
+        }
+        return null;
+      },
       textInputAction: TextInputAction.next,
       focusNode: _emailNode,
       onFieldSubmitted: (term) {
@@ -86,12 +86,12 @@ class Login extends StatelessWidget {
           InputDecoration(labelText: "Password", alignLabelWithHint: true),
       autocorrect: false,
       focusNode: _passNode,
-//      validator: (password) {
-//        if (password.isEmpty) {
-//          return "Please enter a password";
-//        }
-//        return null;
-//      },
+      validator: (password) {
+        if (password.isEmpty) {
+          return "Please enter a password";
+        }
+        return null;
+      },
       textInputAction: TextInputAction.done,
       onFieldSubmitted: (term) {
         _login(context);

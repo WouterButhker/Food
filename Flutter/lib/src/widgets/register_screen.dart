@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
 import 'package:student/src/controllers/login_controller.dart';
+import 'package:student/src/widgets/checkbox_list_tile_form_field.dart';
 import 'package:student/src/widgets/password_bar.dart';
 
 class Register extends StatelessWidget {
@@ -19,15 +20,14 @@ class Register extends StatelessWidget {
           child: Form(
             key: _formKey,
             child: ChangeNotifierProvider(
-                create: (context) => _PasswordModel(),
-                child: _RegisterScreen(_formKey),
+              create: (context) => _RegisterScreenModel(),
+              child: _RegisterScreen(_formKey),
             ),
           ),
         ),
-      ),);
+      ),
+    );
   }
-
-
 }
 
 // ignore: must_be_immutable
@@ -41,6 +41,7 @@ class _RegisterScreen extends StatelessWidget {
   String _email;
   String _name;
   String _pass;
+  bool _marketingMails;
 
   _RegisterScreen(this._formKey);
 
@@ -52,37 +53,27 @@ class _RegisterScreen extends StatelessWidget {
         _emailInput(context),
         _nameInput(context),
         _passInput(context),
-        Consumer<_PasswordModel>(builder: (context, passwordBarModel, child) {
-          return Visibility(
-            visible: passwordBarModel.show,
-            child: Container(
-              margin: EdgeInsets.fromLTRB(0, 5, 0, 0),
-              child: PasswordBar(
-                password: passwordBarModel._password,
-                radius: 5,
-                height: 5,
-                backgroundColor: Theme.of(context).backgroundColor,
-              ),
-            ),
-          );
-        }),
+        _passwordBar(context),
         _passInput2(context),
+        acceptTerms(context),
+        marketing(context),
         RaisedButton(
             child: Text("Register account"),
             onPressed: () {
               _formKey.currentState.save();
               if (_formKey.currentState.validate()) {
-                LoginController.register(_email, _name, _pass, context);
+                LoginController.register(_email, _name, _pass,
+                    _marketingMails, context);
               }
             }),
       ],
     );
   }
 
-
   Widget _emailInput(context) {
     return TextFormField(
-      decoration: InputDecoration(labelText: "Email address*", alignLabelWithHint: true),
+      decoration: InputDecoration(
+          labelText: "Email address*", alignLabelWithHint: true),
       validator: LoginController.validateEmail,
       textInputAction: TextInputAction.next,
       focusNode: _emailNode,
@@ -98,7 +89,7 @@ class _RegisterScreen extends StatelessWidget {
   }
 
   Widget _nameInput(context) {
-    return TextFormField (
+    return TextFormField(
       decoration: InputDecoration(labelText: "Name*", alignLabelWithHint: true),
       focusNode: _nameNode,
       onFieldSubmitted: (term) {
@@ -120,12 +111,14 @@ class _RegisterScreen extends StatelessWidget {
   Widget _passInput(context) {
     return TextFormField(
       obscureText: true,
-      decoration: InputDecoration(labelText: "Password*", alignLabelWithHint: true),
+      decoration:
+          InputDecoration(labelText: "Password*", alignLabelWithHint: true),
       autocorrect: false,
       focusNode: _passNode,
       onChanged: (val) {
-        Provider.of<_PasswordModel>(context, listen: false).setPassword(val);
-        Provider.of<_PasswordModel>(context, listen: false).showBar();
+        Provider.of<_RegisterScreenModel>(context, listen: false)
+            .setPassword(val);
+        Provider.of<_RegisterScreenModel>(context, listen: false).showBar();
       },
       validator: LoginController.checkPasswordStrength,
       textInputAction: TextInputAction.next,
@@ -136,7 +129,6 @@ class _RegisterScreen extends StatelessWidget {
       onSaved: (val) {
         _pass = val;
       },
-
     );
   }
 
@@ -156,14 +148,54 @@ class _RegisterScreen extends StatelessWidget {
     );
   }
 
+  Widget _passwordBar(context) {
+    return Consumer<_RegisterScreenModel>(
+        builder: (context, passwordBarModel, child) {
+          return Visibility(
+            visible: passwordBarModel._show,
+            child: Container(
+              margin: EdgeInsets.fromLTRB(0, 5, 0, 0),
+              child: PasswordBar(
+                password: passwordBarModel._password,
+                radius: 5,
+                height: 5,
+                backgroundColor: Theme
+                    .of(context)
+                    .backgroundColor,
+              ),
+            ),
+          );
+        });
+  }
+
+  Widget acceptTerms(context) {
+    return CheckboxListTileFormField(
+      context: context,
+      title: Text("I have read the terms and conditions"
+          " and I agree to the privacy policiy*"),
+      // TODO: add privacy policy and terms
+      validator: (val) {
+        if (!val) return "Accepting the terms is required";
+        return null;
+      },
+    );
+  }
+
+  Widget marketing(context) {
+    return CheckboxListTileFormField(
+      context: context,
+      title: Text("I want to receive marketing emails"),
+      dense: false,
+      onSaved: (val) {
+        _marketingMails = val;
+      }
+    );
+  }
 }
 
-class _PasswordModel extends ChangeNotifier {
+class _RegisterScreenModel extends ChangeNotifier {
   String _password;
   bool _show = false;
-
-  bool get show => _show;
-  String get password => _password;
 
   void setPassword(String pass) {
     _password = pass;
@@ -175,4 +207,5 @@ class _PasswordModel extends ChangeNotifier {
     _show = true;
     notifyListeners();
   }
+
 }

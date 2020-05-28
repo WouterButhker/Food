@@ -1,6 +1,7 @@
 import 'package:flutter/widgets.dart';
 import 'package:http/http.dart';
 import 'package:password_strength/password_strength.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:student/src/communication/server_communication.dart';
 import 'package:student/src/entities/user.dart';
 
@@ -37,12 +38,32 @@ class LoginController {
     }
   }
 
-  static void register(String email, String name, String password, context) async {
+  static void register(String email, String name, String password, bool marketing, context) async {
     User user = new User(email, name, password);
     Response res = await ServerCommunication.register(user);
     if (res.statusCode == 200 || res.statusCode == 202) {
-      Navigator.pushReplacementNamed(context, '/login');
+      //Navigator.pushReplacementNamed(context, '/login');
     }
+  }
+
+  static void _saveUserData(String email, int id, String authHeader) async {
+    final _prefs = await SharedPreferences.getInstance();
+
+    _prefs.setString("email", email);
+    _prefs.setString("header", authHeader);
+    _prefs.setInt("userId", id);
+    _prefs.setBool("loggedIn", true);
+  }
+
+  static void login(String email, String pass) async {
+    Response res = await ServerCommunication.login(email, pass);
+
+    if (res.statusCode != 200) {
+      throw new Exception("Failed to login");
+    }
+    int id = int.parse(res.body.toString());
+    String authHeader = await ServerCommunication.getAuth();
+    _saveUserData(email, id, authHeader);
   }
 
 }

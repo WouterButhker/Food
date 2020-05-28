@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:student/src/widgets/mainscreen.dart';
-import 'package:student/src/widgets/food.dart';
-import 'package:student/src/widgets/login.dart';
+import 'package:student/src/widgets/main_screen.dart';
+import 'package:student/src/widgets/food_screen.dart';
+import 'package:student/src/widgets/login_screen.dart';
 import 'package:student/src/theme/theme.dart';
-import 'package:student/src/widgets/register.dart';
+import 'package:student/src/widgets/register_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -41,7 +41,7 @@ class MyApp extends StatelessWidget {
               title: 'Student tools',
               initialRoute: startPage,
               routes: {
-                '/login': (context) => Login(),
+                '/login': (context) => LoginScreen(),
                 '/main': (context) => MainScreen(),
                 '/food': (context) => Food(),
                 '/register': (context) => Register(),
