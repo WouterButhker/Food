@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:student/src/theme/AppLocalizations.dart';
 import 'package:student/src/theme/theme.dart';
 
 class MainScreen extends StatelessWidget {
@@ -10,7 +11,7 @@ class MainScreen extends StatelessWidget {
     return Scaffold(
       key: scaffoldKey,
       appBar: AppBar(
-        title: Text("Welkom"),
+        title: Text(AppLocalizations.of(context).translate("welcome")),
         actions: <Widget>[
           IconButton(
             icon: Icon(Icons.account_circle),

@@ -52,10 +52,11 @@ class LoginController {
     _prefs.setString("email", email);
     _prefs.setInt("userId", id);
     _prefs.setBool("loggedIn", true);
+    print("saved login data");
   }
 
   static void login(String email, String pass) async {
-    ServerCommunication.setAuthHeader(email, pass);
+    await ServerCommunication.setAuthHeader(email, pass);
 
     Response res = await ServerCommunication.getUserId();
 
@@ -64,6 +65,7 @@ class LoginController {
     }
     int id = int.parse(res.body.toString());
     _saveUserData(email, id);
+    print('Login successful');
   }
 
 }

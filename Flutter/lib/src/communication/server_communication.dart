@@ -19,10 +19,11 @@ class ServerCommunication {
   }
 
   /// Generates the authentication header and saves it in memory and shared preferences
-  static void setAuthHeader(String email, String pass) async {
+  static Future setAuthHeader(String email, String pass) async {
     _auth = "Basic " + base64Encode(utf8.encode("$email:$pass"));
     final _prefs = await SharedPreferences.getInstance();
     _prefs.setString("header", _auth);
+    return;
   }
 
   static Future<http.Response> _authenticatedGet(String url) async {

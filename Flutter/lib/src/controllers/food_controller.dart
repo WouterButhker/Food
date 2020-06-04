@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:student/src/communication/database_communication.dart';
@@ -7,6 +8,7 @@ import 'package:student/src/communication/server_communication.dart';
 import 'package:student/src/entities/group.dart';
 import 'package:student/src/entities/reservation.dart';
 import 'package:student/src/entities/user.dart';
+import 'package:student/src/models/language_model.dart';
 
 class FoodController {
   static void yes() {
@@ -68,5 +70,6 @@ class FoodController {
   static void custom(int amountEating, int amountCooking) {
     //DatabaseCommunication.reCreateDatabase();
     //ServerCommunication.authenticatedGet("/mail");
+
   }
 }

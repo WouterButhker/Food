@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:student/src/models/language_model.dart';
+import 'package:student/src/theme/AppLocalizations.dart';
 import 'package:student/src/widgets/main_screen.dart';
 import 'package:student/src/widgets/food_screen.dart';
 import 'package:student/src/widgets/login_screen.dart';
@@ -14,6 +17,10 @@ void main() async {
   final prefs = await SharedPreferences.getInstance();
   final ThemeState themeState = ThemeState(prefs);
 
+  // load the correct language
+  final LanguageModel languageModel = LanguageModel(prefs);
+  languageModel.fetchLocale();
+
   // check if user has logged in before to determine the start page
   final bool loggedIn = prefs.getBool("loggedIn") ?? false;
   String startPage = loggedIn ? "/main" : "/login";
@@ -22,21 +29,27 @@ void main() async {
   runApp(MyApp(
     themeState: themeState,
     startPage: startPage,
+    languageModel: languageModel,
   ));
 }
 
 class MyApp extends StatelessWidget {
   final ThemeState themeState;
   final String startPage;
+  final LanguageModel languageModel;
 
-  MyApp({Key key, this.themeState, this.startPage}) : super(key: key);
+  MyApp({Key key, this.themeState, this.startPage, this.languageModel})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (context) => themeState,
-      child: Consumer<ThemeState>(
-        builder: (context, theme, child) {
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider.value(value: themeState),
+        ChangeNotifierProvider.value(value: languageModel),
+      ],
+      child: Consumer2<ThemeState, LanguageModel>(
+        builder: (context, theme, languageModel, child) {
           return MaterialApp(
               title: 'Student tools',
               initialRoute: startPage,
@@ -46,6 +59,17 @@ class MyApp extends StatelessWidget {
                 '/food': (context) => Food(),
                 '/register': (context) => Register(),
               },
+              locale: languageModel.appLocale,
+              supportedLocales: [
+                const Locale('en'),
+                const Locale('nl'),
+              ],
+              localizationsDelegates: [
+                AppLocalizations.delegate,
+                GlobalMaterialLocalizations.delegate,
+                GlobalWidgetsLocalizations.delegate,
+                GlobalCupertinoLocalizations.delegate,
+              ],
               theme: theme.theme);
         },
       ),

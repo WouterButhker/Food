@@ -3,12 +3,15 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
+import 'package:provider/provider.dart';
 import 'package:student/src/communication/database_communication.dart';
 import 'package:student/src/communication/server_communication.dart';
 import 'package:student/src/controllers/food_controller.dart';
 import 'package:student/src/entities/user.dart';
 import 'package:student/src/icons/chef_hat_icons.dart';
 import 'package:student/src/entities/reservation.dart';
+import 'package:student/src/models/language_model.dart';
+import 'package:student/src/theme/AppLocalizations.dart';
 
 class Food extends StatelessWidget {
   @override
@@ -191,7 +194,8 @@ class Choice extends StatelessWidget {
         RawMaterialButton(
           onPressed: () {
             // TODO: add popup
-            FoodController.custom(0, 0);
+            //FoodController.custom(0, 0);
+            Provider.of<LanguageModel>(context, listen: false).changeLanguage(Locale('nl'));
           },
           child: Text(
             "...",

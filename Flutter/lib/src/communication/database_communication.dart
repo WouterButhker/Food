@@ -39,15 +39,14 @@ class DatabaseCommunication {
   }
 
    static Future<void> _onDatabaseCreate(Database db, int version) async {
-    String groups = "CREATE TABLE user_groups(id INTEGER PRIMARY KEY NOT NULL, name TEXT NOT NULL)";
-    String users = "CREATE TABLE users(id INTEGER PRIMARY KEY NOT NULL, name TEXT, email TEXT)";
-    String reservation = '''CREATE TABLE reservations(user_group INTEGER NOT NULL,
+    List<String> list = ["CREATE TABLE user_groups(id INTEGER PRIMARY KEY NOT NULL, name TEXT NOT NULL)",
+     "CREATE TABLE users(id INTEGER PRIMARY KEY NOT NULL, name TEXT, email TEXT)",
+    '''CREATE TABLE reservations(user_group INTEGER NOT NULL,
      user INTEGER NOT NULL, date TEXT NOT NULL, 
      amountEating INTEGER, amountCooking INTEGER, 
      FOREIGN KEY (user) REFERENCES users (id), 
      FOREIGN KEY (user_group) REFERENCES user_groups (id), 
-     PRIMARY KEY (user_group, user, date))''';
-    List<String> list = [groups, users, reservation];
+     PRIMARY KEY (user_group, user, date))'''];
 
     Batch batch = db.batch();
     list.forEach((query) => batch.execute(query));
