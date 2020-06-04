@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:student/src/theme/AppLocalizations.dart';
+import 'package:student/src/theme/app_localizations.dart';
 import 'package:student/src/theme/theme.dart';
+import 'package:student/src/widgets/app_drawer.dart';
 
 class MainScreen extends StatelessWidget {
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
@@ -10,22 +11,9 @@ class MainScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       key: scaffoldKey,
+      drawer: AppDrawer(),
       appBar: AppBar(
         title: Text(AppLocalizations.of(context).translate("welcome")),
-        actions: <Widget>[
-          IconButton(
-            icon: Icon(Icons.account_circle),
-            onPressed: () {
-              SharedPreferences.getInstance().then((pref) {
-                Navigator.pushReplacementNamed(context, "/login");
-                pref.setBool("loggedIn", false);
-              });
-              SnackBar snacc = SnackBar(content: Text("Logged out"));
-              scaffoldKey.currentState.showSnackBar(snacc);
-
-            },
-          )
-        ],
       ),
       body: ChangeNotifierProvider(
         create: (context) => GroupModel(),

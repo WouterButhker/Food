@@ -11,7 +11,7 @@ import 'package:student/src/entities/user.dart';
 import 'package:student/src/icons/chef_hat_icons.dart';
 import 'package:student/src/entities/reservation.dart';
 import 'package:student/src/models/language_model.dart';
-import 'package:student/src/theme/AppLocalizations.dart';
+import 'package:student/src/theme/app_localizations.dart';
 
 class Food extends StatelessWidget {
   @override

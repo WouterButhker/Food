@@ -3,12 +3,13 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:student/src/models/language_model.dart';
-import 'package:student/src/theme/AppLocalizations.dart';
+import 'package:student/src/theme/app_localizations.dart';
 import 'package:student/src/widgets/main_screen.dart';
 import 'package:student/src/widgets/food_screen.dart';
 import 'package:student/src/widgets/login_screen.dart';
 import 'package:student/src/theme/theme.dart';
 import 'package:student/src/widgets/register_screen.dart';
+import 'package:student/src/widgets/settings_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -51,26 +52,28 @@ class MyApp extends StatelessWidget {
       child: Consumer2<ThemeState, LanguageModel>(
         builder: (context, theme, languageModel, child) {
           return MaterialApp(
-              title: 'Student tools',
-              initialRoute: startPage,
-              routes: {
-                '/login': (context) => LoginScreen(),
-                '/main': (context) => MainScreen(),
-                '/food': (context) => Food(),
-                '/register': (context) => Register(),
-              },
-              locale: languageModel.appLocale,
-              supportedLocales: [
-                const Locale('en'),
-                const Locale('nl'),
-              ],
-              localizationsDelegates: [
-                AppLocalizations.delegate,
-                GlobalMaterialLocalizations.delegate,
-                GlobalWidgetsLocalizations.delegate,
-                GlobalCupertinoLocalizations.delegate,
-              ],
-              theme: theme.theme);
+            title: 'Student tools',
+            initialRoute: startPage,
+            routes: {
+              '/login': (context) => LoginScreen(),
+              '/main': (context) => MainScreen(),
+              '/food': (context) => Food(),
+              '/register': (context) => Register(),
+              '/settings': (context) => SettingsScreen(),
+            },
+            locale: languageModel.appLocale,
+            supportedLocales: [
+              const Locale('en'),
+              const Locale('nl'),
+            ],
+            localizationsDelegates: [
+              AppLocalizations.delegate,
+              GlobalMaterialLocalizations.delegate,
+              GlobalWidgetsLocalizations.delegate,
+              GlobalCupertinoLocalizations.delegate,
+            ],
+            theme: theme.theme,
+          );
         },
       ),
     );

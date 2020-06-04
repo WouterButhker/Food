@@ -1,3 +1,13 @@
 {
-  "welcome" : "!"
+  "welcome" : "Welkom!",
+  "settings" : "Instellingen",
+  "about" : "Over deze app",
+  "account" : "Account",
+  "language" : "Taal",
+  "select_language" : "Selecteer uw taal",
+  "nl" : "Nederlands",
+  "en" : "Engels",
+  "theme" : "Thema",
+  "dark" : "Donker",
+  "light" : "Licht"
 }
