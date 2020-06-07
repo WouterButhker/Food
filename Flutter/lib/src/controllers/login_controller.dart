@@ -55,10 +55,22 @@ class LoginController {
     print("saved login data");
   }
 
+  static void logout(context) async {
+    final prefs = await SharedPreferences.getInstance();
+
+    prefs.setBool("loggedIn", false);
+    prefs.setString("email", null);
+    prefs.setInt("userId", null);
+
+    Navigator.pushReplacementNamed(context, "/login");
+  }
+
   static void login(String email, String pass) async {
     await ServerCommunication.setAuthHeader(email, pass);
 
-    Response res = await ServerCommunication.getUserId();
+    Response res = await ServerCommunication.getUserId().catchError((error) {
+      throw new Exception("Can't reach server");
+    });
 
     if (res.statusCode != 200) {
       throw new Exception("Failed to login");

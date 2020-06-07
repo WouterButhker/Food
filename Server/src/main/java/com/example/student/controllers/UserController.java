@@ -22,6 +22,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import java.security.Principal;
@@ -131,5 +132,11 @@ public class UserController {
             return u.getId();
         }
         throw new UserNotFoundException();
+    }
+
+    @PutMapping(path = "/picture")
+    void uploadProfilePicture(@RequestParam("file") MultipartFile file, Principal principal) {
+        User user = userRepository.findByEmailAddress(principal.getName());
+
     }
 }

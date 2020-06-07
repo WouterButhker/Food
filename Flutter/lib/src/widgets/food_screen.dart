@@ -56,9 +56,9 @@ class DateSelector extends StatelessWidget {
         ),
         Center(
             child: Text(
-              "Vandaag",
-              textScaleFactor: 3,
-            )),
+          "Vandaag",
+          textScaleFactor: 3,
+        )),
         Container(
           child: Expanded(
             child: Center(
@@ -102,9 +102,7 @@ class People extends StatelessWidget {
       out.add(
         GridTile(
           child: Align(
-            child: Text(
-                s
-            ),
+            child: Text(s),
             alignment: Alignment.centerLeft,
           ),
         ),
@@ -134,9 +132,10 @@ class Choice extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.center,
-      mainAxisAlignment: MainAxisAlignment.center,
+      mainAxisAlignment: MainAxisAlignment.spaceAround,
       children: <Widget>[
         RawMaterialButton(
+          constraints: BoxConstraints.tightFor(height: 40, width: 40),
           onPressed: () {
             FoodController.yes();
           },
@@ -152,8 +151,9 @@ class Choice extends StatelessWidget {
           elevation: 2,
         ),
         RawMaterialButton(
+          constraints: BoxConstraints.tightFor(height: 40, width: 40),
           onPressed: () {
-           FoodController.no();
+            FoodController.no();
           },
           child: Icon(
             Icons.close,
@@ -164,6 +164,7 @@ class Choice extends StatelessWidget {
           elevation: 2,
         ),
         RawMaterialButton(
+          constraints: BoxConstraints.tightFor(height: 40, width: 40),
           onPressed: () {
             FoodController.cook();
           },
@@ -176,6 +177,7 @@ class Choice extends StatelessWidget {
           elevation: 2,
         ),
         RawMaterialButton(
+          constraints: BoxConstraints.tightFor(height: 40, width: 40),
           onPressed: () {
             FoodController.maybe();
           },
@@ -192,10 +194,12 @@ class Choice extends StatelessWidget {
           elevation: 2,
         ),
         RawMaterialButton(
+          constraints: BoxConstraints.tightFor(height: 40, width: 40),
           onPressed: () {
             // TODO: add popup
             //FoodController.custom(0, 0);
-            Provider.of<LanguageModel>(context, listen: false).changeLanguage(Locale('nl'));
+            Provider.of<LanguageModel>(context, listen: false)
+                .changeLanguage(Locale('nl'));
           },
           child: Text(
             "...",
@@ -208,6 +212,4 @@ class Choice extends StatelessWidget {
       ],
     );
   }
-
-
 }

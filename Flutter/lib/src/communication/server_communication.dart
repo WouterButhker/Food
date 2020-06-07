@@ -6,9 +6,10 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:student/src/entities/group.dart';
 import 'package:student/src/entities/reservation.dart';
 import 'package:student/src/entities/user.dart';
+import 'package:http_parser/http_parser.dart';
 
 class ServerCommunication {
-  static String _host = "http://192.168.0.173:8080";
+  static String _host = "http://192.168.2.4:8080";
   static String _auth;
 
   static Future<String> _getAuth() async {
@@ -32,7 +33,7 @@ class ServerCommunication {
     print("GET Request to " + _url);
 
     http.Response _res =
-        await http.get(_url, headers: {HttpHeaders.authorizationHeader: await _getAuth()});
+        await http.get(_url, headers: {HttpHeaders.authorizationHeader: await _getAuth()}).timeout(Duration(seconds: 5));
     print("Response " + _res.statusCode.toString() + ': ' +  _res.body.toString());
     return _res;
   }
@@ -80,6 +81,7 @@ class ServerCommunication {
       HttpHeaders.contentTypeHeader: "application/json"
     };
 
+
     print("DELETE request to " + url);
     Response _res = await http
         .delete(_url,
@@ -89,6 +91,23 @@ class ServerCommunication {
     return _res;
   }
 
+  static Future<http.StreamedResponse> _authenticatedMultiPart(String url, File file) async {
+    print('MultiPart request to ' + url);
+    Uri uri = Uri.parse(url);
+    var request = http.MultipartRequest("POST", uri);
+    request.fields["user"] = "test";
+    request.files.add(
+      http.MultipartFile.fromBytes("file", await file.readAsBytes(), contentType: MediaType("image", "jpg")));
+
+    http.StreamedResponse res = await request.send();
+    print("Response " + res.statusCode.toString() + ': ' +  res.stream.toString());
+
+    return res;
+  }
+
+  static Future<http.StreamedResponse> uploadProfilePicture(File image) async {
+    return await _authenticatedMultiPart("/users/picture", image);
+  }
 
 
   static Future<http.Response> getUserId() async {
@@ -118,5 +137,8 @@ class ServerCommunication {
   static Future<http.Response> getUsersFromGroup(int groupId) async{
     return await _authenticatedGet("/users/get");
   }
+
+
+
 
 }

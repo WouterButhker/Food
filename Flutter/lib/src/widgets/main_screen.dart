@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:student/src/theme/app_localizations.dart';
 import 'package:student/src/theme/theme.dart';
 import 'package:student/src/widgets/app_drawer.dart';

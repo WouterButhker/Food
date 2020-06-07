@@ -12,7 +12,6 @@ class SettingsModel extends ChangeNotifier {
 
   SettingsModel() {
     _init();
-    print("CREATE SETTINGSMODEL");
   }
 
   void _init() async {

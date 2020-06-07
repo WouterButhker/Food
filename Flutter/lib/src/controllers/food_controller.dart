@@ -64,7 +64,7 @@ class FoodController {
   }
 
   static void maybe() {
-    ServerCommunication.getAllReservations(1);
+    //ServerCommunication.getAllReservations(1);
   }
 
   static void custom(int amountEating, int amountCooking) {

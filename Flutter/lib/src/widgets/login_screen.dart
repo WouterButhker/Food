@@ -49,9 +49,7 @@ class LoginScreen extends StatelessWidget {
       _formKey.currentState.save();
       LoginController.login(_email, _password);
 
-      //ServerCommunication.authenticatedGet("/");
-
-      //print(_res.statusCode);
+      // TODO: only go to main if login is successful
       Navigator.pushReplacementNamed(context, "/main");
     }
   }
