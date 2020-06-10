@@ -27,5 +27,7 @@ class User extends DatabaseItem {
     return super.addToDatabaseByName("users");
   }
 
+  String get email => _email;
+
 
 }

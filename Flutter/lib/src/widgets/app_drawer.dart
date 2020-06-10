@@ -6,6 +6,7 @@ import 'package:flutter/widgets.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
+import 'package:student/src/communication/server_communication.dart';
 import 'package:student/src/controllers/account_controller.dart';
 import 'package:student/src/controllers/login_controller.dart';
 import 'package:student/src/theme/app_localizations.dart';
@@ -36,7 +37,7 @@ class AppDrawer extends StatelessWidget {
                       imageModel.setImage();
                     },
                     child: CircleAvatar(
-                      backgroundImage: imageModel.image != null ? FileImage(imageModel.image) : null,
+                      backgroundImage: imageModel.image,
                       child: imageModel.image == null ? Text("a") : null,
                       backgroundColor: Colors.transparent,
                     ),
@@ -87,13 +88,21 @@ class AppDrawer extends StatelessWidget {
       ),
     );
   }
+
 }
 
 class _ImageModel extends ChangeNotifier {
-  File _image;
+  ImageProvider<dynamic> _image;
 
   _ImageModel() {
     // TODO: get image from storage or whatever
+    _getImageFromServer();
+  }
+
+  void _getImageFromServer() async {
+    _image = await ServerCommunication.getProfilePicture("deadlyspammers@gmail.com");
+    print('_ImageModel._getImageFromServer');
+    notifyListeners();
   }
 
   void setImage() async {
@@ -101,9 +110,11 @@ class _ImageModel extends ChangeNotifier {
 
     if (file == null) return;
 
-    _image = file;
+    AccountController.uploadImage(file);
+
+    _image = FileImage(file);
     notifyListeners();
   }
 
-  File get image => _image;
+  ImageProvider<dynamic> get image => _image;
 }

@@ -5,26 +5,28 @@ import com.example.student.entities.Group;
 import com.example.student.entities.GroupUserPermission;
 import com.example.student.entities.User;
 import com.example.student.entities.VerificationToken;
-import com.example.student.exceptions.AlreadyExistsException;
-import com.example.student.exceptions.GroupNotFoundException;
-import com.example.student.exceptions.UserNotFoundException;
-import com.example.student.exceptions.VerificationFailedException;
+import com.example.student.exceptions.*;
 import com.example.student.repositories.GroupRepository;
 import com.example.student.repositories.GroupUserPermissionRepository;
 import com.example.student.repositories.UserRepository;
 import com.example.student.repositories.VerificationTokenRepository;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
-import org.hibernate.exception.ConstraintViolationException;
+import org.apache.tomcat.util.http.fileupload.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.MediaType;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -49,6 +51,9 @@ public class UserController {
 
     @Autowired
     ApplicationEventPublisher eventPublisher;
+
+    @Value("${PROFILE_PICTURES_PATH}")
+    private String profilePicturePath;
 
     @PostMapping("/register")
     User addUser(@RequestBody String json, HttpServletRequest request) {
@@ -134,9 +139,43 @@ public class UserController {
         throw new UserNotFoundException();
     }
 
-    @PutMapping(path = "/picture")
-    void uploadProfilePicture(@RequestParam("file") MultipartFile file, Principal principal) {
+    @PostMapping(path = "/picture")
+    void uploadProfilePicture(MultipartFile file, Principal principal) {
         User user = userRepository.findByEmailAddress(principal.getName());
+        System.out.println("received file, name: " + file.getOriginalFilename());
+        String newFileName = principal.getName();
 
+        File newFile = new File(profilePicturePath + newFileName + ".jpg");
+
+        try {
+            file.transferTo(newFile);
+        } catch (IOException e) {
+            throw new FailedToSaveException("Failed to save profile picture to file system");
+        }
+
+
+    }
+
+    @GetMapping(
+            path = "/picture",
+            produces = MediaType.IMAGE_JPEG_VALUE)
+    @ResponseBody void getProfilePicture(@RequestParam("user") String email, HttpServletResponse response) {
+        File file = new File(profilePicturePath + email + ".jpg");
+
+        if (!file.exists()) throw new UserNotFoundException();
+
+        response.setContentType(MediaType.IMAGE_JPEG_VALUE);
+        try {
+            InputStream inputStream = new FileInputStream(file);
+
+            IOUtils.copy(inputStream, response.getOutputStream());
+            System.out.println("Send image");
+        } catch (IOException e) {
+            try {
+                response.sendError(500, "failed to send image");
+            } catch (IOException ioException) {
+                ioException.printStackTrace();
+            }
+        }
     }
 }

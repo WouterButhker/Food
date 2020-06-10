@@ -5,6 +5,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:student/src/communication/server_communication.dart';
 
 class AccountController {
 
@@ -25,6 +26,8 @@ class AccountController {
   }
 
   static void uploadImage(File image) async {
-
+    ServerCommunication.uploadProfilePicture(image);
   }
+
+
 }

@@ -1,11 +1,15 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:student/src/communication/server_communication.dart';
 import 'package:student/src/theme/app_localizations.dart';
 import 'package:student/src/theme/theme.dart';
 import 'package:student/src/widgets/app_drawer.dart';
 
 class MainScreen extends StatelessWidget {
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -70,6 +74,22 @@ class Buttons extends StatelessWidget {
           ),
           margin: EdgeInsets.all(5),
         ),
+        FutureBuilder<String>(
+          future: ServerCommunication.getAuth(),
+          builder: (context, AsyncSnapshot<String> snapshot) {
+            if (snapshot.hasData) {
+              return Image.network(
+                ServerCommunication.getProfilePictureLink(
+                    "deadlyspammers@gmail.com"),
+                headers: {HttpHeaders.authorizationHeader: snapshot.data},
+                width: 100,
+                height: 100,
+              );
+            } else {
+              return Text("Wait");
+            }
+          },
+        )
       ],
       mainAxisAlignment: MainAxisAlignment.center,
     );
