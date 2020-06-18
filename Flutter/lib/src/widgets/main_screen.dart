@@ -27,6 +27,7 @@ class MainScreen extends StatelessWidget {
                 create: (context) => ThemeButtonState(),
                 child: Buttons(),
               ),
+
               Expanded(
                 child: GroupList(),
               ),
@@ -124,3 +125,5 @@ class GroupModel extends ChangeNotifier {
     notifyListeners();
   }
 }
+
+
