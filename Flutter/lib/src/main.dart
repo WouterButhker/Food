@@ -4,7 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:student/src/models/language_model.dart';
 import 'package:student/src/theme/app_localizations.dart';
-import 'package:student/src/widgets/main_screen.dart';
+import 'package:student/src/widgets/main_screen/main_screen.dart';
 import 'package:student/src/widgets/food_screen/food_screen.dart';
 import 'package:student/src/widgets/login_screen.dart';
 import 'package:student/src/theme/theme.dart';

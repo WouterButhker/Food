@@ -11,27 +11,30 @@ import 'package:student/src/entities/user.dart';
 import 'package:student/src/models/language_model.dart';
 
 class FoodController {
-  static void yes() {
-    Reservation _res =
-        Reservation("Samballen", DateTime.now(), 1, amountEating: 1);
-    String _json = jsonEncode(_res);
-    print(_json);
-    ServerCommunication.sendReservation(_res).then((val) {
-      print(val.statusCode);
-    });
+  static void yes() async {
+//    Reservation _res =
+//        Reservation("Samballen", DateTime.now(), 1, amountEating: 1);
+//    String _json = jsonEncode(_res);
+//    print(_json);
+//    ServerCommunication.sendReservation(_res).then((val) {
+//      print(val.statusCode);
+//    });
+    Response res = await ServerCommunication.getUserGroups();
+    List<Group> groups = Group.getListFromJson(res.body);
+    print(groups.toString());
   }
 
   static void no() {
-    User user = new User("p@inda", "Pinda", "pass");
-    ServerCommunication.register(user).then((res) {
-      if (res.statusCode == 200) {
-      } else if (res.statusCode == 403) {
-        print("Not authorized");
-      } else {
-       // Map<String, dynamic> json = jsonDecode(res.body);
-        print("Error " + res.statusCode.toString()); //+ ": " + json["message"]);
-      }
-    });
+//    User user = new User("p@inda", "Pinda", "pass");
+//    ServerCommunication.register(user).then((res) {
+//      if (res.statusCode == 200) {
+//      } else if (res.statusCode == 403) {
+//        print("Not authorized");
+//      } else {
+//       // Map<String, dynamic> json = jsonDecode(res.body);
+//        print("Error " + res.statusCode.toString()); //+ ": " + json["message"]);
+//      }
+//    });
 //            DatabaseCommunication.initDatabase().then((db) {
 //              db.query("users").then((val) {
 //                print(val);
@@ -46,21 +49,21 @@ class FoodController {
   }
 
   static void cook() async {
-    Response res = await ServerCommunication.addGroup("BIERR");
-    Map<String, dynamic> json = jsonDecode(res.body);
-    Group group = new Group.fromJson(json);
-    print(group);
-    group.addToDatabase();
-
-    List<Group> groups = await DatabaseCommunication.getAllGroupsFromUser();
-    int id = groups.elementAt(0).id;
-    var response = await ServerCommunication.getUsersFromGroup(id);
-
-    print(groups);
-
-    print("all users (in group 0) " + response.body.toString());
-    List<User> users = await DatabaseCommunication.getAllUsers();
-    print(users);
+//    Response res = await ServerCommunication.addGroup("BIERR");
+//    Map<String, dynamic> json = jsonDecode(res.body);
+//    Group group = new Group.fromJson(json);
+//    print(group);
+//    group.addToDatabase();
+//
+//    List<Group> groups = await DatabaseCommunication.getAllGroupsFromUser();
+//    int id = groups.elementAt(0).id;
+//    var response = await ServerCommunication.getUsersFromGroup(id);
+//
+//    print(groups);
+//
+//    print("all users (in group 0) " + response.body.toString());
+//    List<User> users = await DatabaseCommunication.getAllUsers();
+//    print(users);
   }
 
   static void maybe() {
@@ -70,6 +73,5 @@ class FoodController {
   static void custom(int amountEating, int amountCooking) {
     //DatabaseCommunication.reCreateDatabase();
     //ServerCommunication.authenticatedGet("/mail");
-
   }
 }

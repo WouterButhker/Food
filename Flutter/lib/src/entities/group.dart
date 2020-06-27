@@ -1,5 +1,7 @@
 
 
+import 'dart:convert';
+
 import 'package:sqflite/sqflite.dart';
 import 'package:student/src/communication/database_communication.dart';
 import 'package:student/src/entities/database_item.dart';
@@ -20,6 +22,11 @@ class Group extends DatabaseItem {
     return Group.fromJson(json);
   }
 
+  static List<Group> getListFromJson(String jsonString) {
+    Iterable jsonResponse = json.decode(jsonString);
+    return List<Group>.from(jsonResponse.map((e) => Group.fromJson(e)));
+  }
+
   Map<String, dynamic> toJson() => {
     'id' : _id,
     'name' : _name
@@ -35,4 +42,5 @@ class Group extends DatabaseItem {
   }
 
   int get id => _id;
+  String get name => _name;
 }

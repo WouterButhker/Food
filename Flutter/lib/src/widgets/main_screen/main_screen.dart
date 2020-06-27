@@ -1,8 +1,10 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:http/http.dart';
 import 'package:provider/provider.dart';
 import 'package:student/src/communication/server_communication.dart';
+import 'package:student/src/entities/group.dart';
 import 'package:student/src/theme/app_localizations.dart';
 import 'package:student/src/theme/theme.dart';
 import 'package:student/src/widgets/app_drawer.dart';
@@ -67,10 +69,11 @@ class Buttons extends StatelessWidget {
             child: Text("Add item"),
             onPressed: () {
               //TODO
-//              Provider.of<GroupModel>(context, listen: false)
-//                  .addGroup("Group " + g.toString());
-//              g++;
-              Navigator.pushNamed(context, '/register');
+              Provider.of<GroupModel>(context, listen: false)
+                  .addGroup("Group " + g.toString());
+              g++;
+              //Navigator.pushNamed(context, '/register');
+
             },
           ),
           margin: EdgeInsets.all(5),
@@ -116,12 +119,24 @@ class GroupList extends StatelessWidget {
 }
 
 class GroupModel extends ChangeNotifier {
-  final List<String> _groups = ["Samballen", "test2", "Test99", "Test420"];
+  List<String> _groupnames = [];
 
-  List<String> get groups => _groups;
+  GroupModel() {
+    init();
+  }
+
+  void init() async {
+    Response res = await ServerCommunication.getUserGroups();
+    List<Group> groups;
+    if (res.statusCode == 200) groups = Group.getListFromJson(res.body);
+    _groupnames = groups.map((group) => group.name).toList();
+    notifyListeners();
+  }
+
+  List<String> get groups => _groupnames;
 
   void addGroup(String group) {
-    _groups.add(group);
+    _groupnames.add(group);
     notifyListeners();
   }
 }

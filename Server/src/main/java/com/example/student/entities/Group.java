@@ -1,5 +1,7 @@
 package com.example.student.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
@@ -17,6 +19,7 @@ public class Group {
     @Column(name = "name", nullable = false)
     private String name;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "group")
     Set<GroupUserPermission> groupUserPermissions = new HashSet<>();
 

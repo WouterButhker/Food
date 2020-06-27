@@ -1,4 +1,6 @@
+import 'dart:async';
 import 'dart:convert';
+import 'dart:core';
 import 'dart:io';
 import 'package:flutter/widgets.dart';
 import 'package:http/http.dart' as http;
@@ -151,6 +153,11 @@ class ServerCommunication {
   static Future<NetworkImage> getProfilePicture(String email) async {
     String url = _host + "/users/picture?user=" + email;
     return NetworkImage(url, headers: {HttpHeaders.authorizationHeader: await getAuth()});
+  }
+
+  static Future<http.Response> getUserGroups() async {
+    http.Response res = await _authenticatedGet("/groups/getUserGroups");
+    return res;
   }
 
 }
