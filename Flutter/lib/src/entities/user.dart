@@ -24,7 +24,7 @@ class User extends DatabaseItem {
       {'email': _email, 'name': _name, 'password': _password};
 
   Future<void> addToDatabase() async {
-    return super.addToDatabaseByName("users");
+    return await super.addToDatabaseByName("users");
   }
 
   String get email => _email;

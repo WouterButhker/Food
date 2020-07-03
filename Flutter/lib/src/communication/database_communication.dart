@@ -1,5 +1,7 @@
 
 
+import 'dart:convert';
+
 import 'package:http/http.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
@@ -63,9 +65,14 @@ class DatabaseCommunication {
 
   static Future<List<Group>> getAllGroupsFromUser() async {
     Database db = await getDatabase();
-    List<Map<String, dynamic>> list = await db.query('groups');
+    List<Map<String, dynamic>> list = await db.query('user_groups');
     List<Group> out = List<Group>.from(list.map((item) => Group.fromJson(item)));
     return out;
+  }
+
+  static Future addAllGroups(List<Group> groups) async {
+    Database db = await getDatabase();
+    for (Group group in groups) db.insert("user_groups", group.toJson());
   }
 
 

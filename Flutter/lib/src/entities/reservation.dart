@@ -1,29 +1,34 @@
 import 'package:json_annotation/json_annotation.dart';
 import 'package:student/src/entities/database_item.dart';
 
-part 'reservation.g.dart';
 
 @JsonSerializable()
-class Reservation extends DatabaseItem {
+class Reservation extends DatabaseItem implements Comparable<Reservation> {
   DateTime _date;
-  String _group;
+  int _groupId;
   int _amountEating;
   int _amountCooking;
   int _user;
 
-  Reservation(String group, DateTime date, int user,
+  Reservation(int group, DateTime date, int user,
       {int amountEating = 0, int amountCooking = 0}) {
     _user = user;
-    _group = group;
+    _groupId = group;
     _date = date;
     _amountCooking = amountCooking;
     _amountEating = amountEating;
   }
 
 
-  factory Reservation.fromJson(Map<String, dynamic> json) =>
-      _$ReservationFromJson(json);
-  Map<String, dynamic> toJson() => _$ReservationToJson(this);
+  Reservation.fromJson(Map<String, dynamic> json) :
+    _date = json['date'],
+  _groupId = json['groupId'],
+  _amountEating = json['amountEating'],
+  _amountCooking = json['amountCooking'],
+  _user = json ['userId'];
+
+  Map<String, dynamic> toJson() =>
+      {'date': _date, 'groupId': _groupId, 'amountEating': _amountEating, 'amountCooking': _amountCooking, 'userId': _user};
 
   int get user => _user;
 
@@ -43,10 +48,10 @@ class Reservation extends DatabaseItem {
     _amountEating = value;
   }
 
-  String get group => _group;
+  int get group => _groupId;
 
-  set group(String value) {
-    _group = value;
+  set group(int value) {
+    _groupId = value;
   }
 
   DateTime get date => _date;
@@ -55,9 +60,41 @@ class Reservation extends DatabaseItem {
     _date = value;
   }
 
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is Reservation &&
+          runtimeType == other.runtimeType &&
+          _date == other._date &&
+          _groupId == other._groupId &&
+          _amountEating == other._amountEating &&
+          _amountCooking == other._amountCooking &&
+          _user == other._user;
+
+  @override
+  int get hashCode =>
+      _date.hashCode ^
+      _groupId.hashCode ^
+      _amountEating.hashCode ^
+      _amountCooking.hashCode ^
+      _user.hashCode;
+
   @override
   Future addToDatabase() {
     return super.addToDatabaseByName("reservations");
+  }
+
+  @override
+  int compareTo(Reservation other) {
+    if (this._date == null || other == null) {
+      return null;
+    } else if (this._date.isSameDate(other.date)) {
+      return 0;
+    } else if (this.date.millisecondsSinceEpoch > other.date.millisecondsSinceEpoch) {
+      return 1;
+    }
+    return -1;
   }
 }
 

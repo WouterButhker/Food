@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-class PeopleList extends StatelessWidget {
+class DayView extends StatelessWidget {
   List<String> _people = ["Wouter", "Pieter", "Klaas", "Adam"];
 
   @override

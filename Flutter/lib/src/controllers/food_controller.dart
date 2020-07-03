@@ -74,4 +74,8 @@ class FoodController {
     //DatabaseCommunication.reCreateDatabase();
     //ServerCommunication.authenticatedGet("/mail");
   }
+
+  static List<User> getUsersInGroup(Group group) {
+
+  }
 }

@@ -1,6 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:student/src/entities/group.dart';
 
 class DaySummary extends StatelessWidget {
+  Group userGroup;
+
+  DaySummary(this.userGroup);
+
   @override
   Widget build(BuildContext context) {
     return Card(

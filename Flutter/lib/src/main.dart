@@ -54,12 +54,28 @@ class MyApp extends StatelessWidget {
           return MaterialApp(
             title: 'Student tools',
             initialRoute: startPage,
-            routes: {
-              '/login': (context) => LoginScreen(),
-              '/main': (context) => MainScreen(),
-              '/food': (context) => FoodScreen(),
-              '/register': (context) => Register(),
-              '/settings': (context) => SettingsScreen(),
+
+            onGenerateRoute: (settings) {
+              final arguments = settings.arguments;
+              return MaterialPageRoute(
+                builder: (context) {
+                  switch (settings.name) {
+                    case '/food':
+                      return FoodScreen(arguments);
+                    case "/login":
+                      return LoginScreen();
+                    case '/main':
+                      return MainScreen();
+                    case '/register':
+                      return Register();
+                    case '/settings':
+                      return SettingsScreen();
+                    default:
+                      return LoginScreen();
+                  }
+                }
+              );
+
             },
             locale: languageModel.appLocale,
             supportedLocales: [
