@@ -9,5 +9,8 @@
   "en" : "English",
   "theme" : "Theme",
   "dark" : "Dark",
-  "light" : "Light"
+  "light" : "Light",
+  "today" : "Today",
+  "yesterday" : "Yesterday",
+  "tomorrow" : "Tomorrow"
 }

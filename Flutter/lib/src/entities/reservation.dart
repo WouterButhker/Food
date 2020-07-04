@@ -1,5 +1,7 @@
 import 'package:json_annotation/json_annotation.dart';
 import 'package:student/src/entities/database_item.dart';
+import 'package:student/src/controllers/date_only_compare.dart';
+
 
 
 @JsonSerializable()
@@ -66,7 +68,7 @@ class Reservation extends DatabaseItem implements Comparable<Reservation> {
       identical(this, other) ||
       other is Reservation &&
           runtimeType == other.runtimeType &&
-          _date == other._date &&
+          _date.isSameDate(other._date) &&
           _groupId == other._groupId &&
           _amountEating == other._amountEating &&
           _amountCooking == other._amountCooking &&
@@ -96,11 +98,10 @@ class Reservation extends DatabaseItem implements Comparable<Reservation> {
     }
     return -1;
   }
-}
 
-extension DateOnlyCompare on DateTime {
-  bool isSameDate(DateTime other) {
-    return this.year == other.year && this.month == other.month
-        && this.day == other.day;
+  @override
+  String toString() {
+    return 'Reservation{_date: $_date, _groupId: $_groupId, _amountEating: $_amountEating, _amountCooking: $_amountCooking, _user: $_user}';
   }
 }
+

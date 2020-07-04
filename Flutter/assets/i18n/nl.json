@@ -9,5 +9,8 @@
   "en" : "Engels",
   "theme" : "Thema",
   "dark" : "Donker",
-  "light" : "Licht"
+  "light" : "Licht",
+  "today" : "Vandaag",
+  "yesterday" : "Gisteren",
+  "tomorrow" : "Morgen"
 }

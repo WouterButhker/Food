@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:student/src/entities/group.dart';
+import 'package:student/src/widgets/food_screen/reservations_model.dart';
 import 'package:student/src/widgets/food_screen/week_view.dart';
 
 import 'day_summary.dart';
@@ -14,12 +16,16 @@ class FoodScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
     return Scaffold(
-        appBar: AppBar(
-          title: Text(this.userGroup.name),
-        ),
-        body: Column(
+      appBar: AppBar(
+        title: Text(this.userGroup.name),
+      ),
+      body: MultiProvider(
+        providers: [
+          ChangeNotifierProvider(create: (context) => ReservationModel(this.userGroup)),
+          ChangeNotifierProvider(create: (context) => DaySummaryModel(DateTime.now()),)
+        ],
+        child: Column(
           children: <Widget>[
             Container(
               child: DateSelector(),
@@ -37,7 +43,9 @@ class FoodScreen extends StatelessWidget {
               ),
             )
           ],
-        ));
+        ),
+      ),
+    );
   }
 }
 
