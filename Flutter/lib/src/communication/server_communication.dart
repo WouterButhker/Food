@@ -12,7 +12,7 @@ import 'package:student/src/entities/user.dart';
 import 'package:http_parser/http_parser.dart';
 
 class ServerCommunication {
-  static String _host = "http://192.168.2.5:8080";
+  static String _host = "http://192.168.2.4:8080";
   static String _auth;
 
   static Future<String> getAuth() async {

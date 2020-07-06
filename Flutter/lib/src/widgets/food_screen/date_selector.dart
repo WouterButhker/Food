@@ -12,7 +12,7 @@ class DateSelector extends StatelessWidget {
           child: RawMaterialButton(
             child: Icon(Icons.chevron_left),
             onPressed: () {
-              Provider.of<DaySummaryModel>(context, listen: false)
+              Provider.of<DateSelectionModel>(context, listen: false)
                   .goToPreviousDay();
             },
           ),
@@ -27,13 +27,13 @@ class DateSelector extends StatelessWidget {
                     firstDate: DateTime.now().subtract(Duration(days: 30)),
                     lastDate: DateTime.now().add(Duration(days: 30)))
                 .then((value) {
-              Provider.of<DaySummaryModel>(context, listen: false)
+              Provider.of<DateSelectionModel>(context, listen: false)
                   .goToSpecificDay(value);
             });
           },
           child: Text(
             LanguageHelper.dayViewDate(
-                Provider.of<DaySummaryModel>(context).selectedDate, context),
+                Provider.of<DateSelectionModel>(context).selectedDate, context),
             textScaleFactor: 2.4,
           ),
         )),
@@ -41,7 +41,7 @@ class DateSelector extends StatelessWidget {
           child: RawMaterialButton(
             child: Icon(Icons.chevron_right),
             onPressed: () {
-              Provider.of<DaySummaryModel>(context, listen: false)
+              Provider.of<DateSelectionModel>(context, listen: false)
                   .goToNextDay();
             },
           ),
@@ -49,9 +49,5 @@ class DateSelector extends StatelessWidget {
       ],
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
     );
-  }
-
-  void _getDate() {
-    DateTime _today = DateTime.now();
   }
 }

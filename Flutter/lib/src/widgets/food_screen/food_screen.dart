@@ -23,7 +23,7 @@ class FoodScreen extends StatelessWidget {
       body: MultiProvider(
         providers: [
           ChangeNotifierProvider(create: (context) => ReservationModel(this.userGroup)),
-          ChangeNotifierProvider(create: (context) => DaySummaryModel(DateTime.now()),)
+          ChangeNotifierProvider(create: (context) => DateSelectionModel(DateTime.now()),)
         ],
         child: Column(
           children: <Widget>[
