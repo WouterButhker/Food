@@ -13,10 +13,8 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
-import javax.annotation.PostConstruct;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -103,6 +101,6 @@ public class ReservationController {
 
         return new Reservation(user, group,
                 date,
-                obj.get("amountCooking").getAsInt(), obj.get("amountEating").getAsInt());
+                obj.get("amountCooking").getAsBoolean(), obj.get("amountEating").getAsInt());
     }
 }

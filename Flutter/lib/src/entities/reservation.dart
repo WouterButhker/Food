@@ -2,35 +2,37 @@ import 'package:json_annotation/json_annotation.dart';
 import 'package:student/src/entities/database_item.dart';
 import 'package:student/src/controllers/date_only_compare.dart';
 
-
-
 @JsonSerializable()
 class Reservation extends DatabaseItem implements Comparable<Reservation> {
   DateTime _date;
   int _groupId;
   int _amountEating;
-  int _amountCooking;
+  bool _isCooking;
   int _user;
 
   Reservation(int group, DateTime date, int user,
-      {int amountEating = 0, int amountCooking = 0}) {
+      {int amountEating = 0, bool isCooking = false}) {
     _user = user;
     _groupId = group;
     _date = date;
-    _amountCooking = amountCooking;
+    _isCooking = isCooking;
     _amountEating = amountEating;
   }
 
+  Reservation.fromJson(Map<String, dynamic> json)
+      : _date = DateTime.parse(json['date']),
+        _groupId = json['groupId'],
+        _amountEating = json['amountEating'],
+        _isCooking = json['isCooking'],
+        _user = json['userId'];
 
-  Reservation.fromJson(Map<String, dynamic> json) :
-    _date = json['date'],
-  _groupId = json['groupId'],
-  _amountEating = json['amountEating'],
-  _amountCooking = json['amountCooking'],
-  _user = json ['userId'];
-
-  Map<String, dynamic> toJson() =>
-      {'date': _date, 'groupId': _groupId, 'amountEating': _amountEating, 'amountCooking': _amountCooking, 'userId': _user};
+  Map<String, dynamic> toJson() => {
+        'date': _date.toIso8601String(),
+        'groupId': _groupId,
+        'amountEating': _amountEating,
+        'isCooking': _isCooking,
+        'userId': _user
+      };
 
   int get user => _user;
 
@@ -38,10 +40,10 @@ class Reservation extends DatabaseItem implements Comparable<Reservation> {
     _user = value;
   }
 
-  int get amountCooking => _amountCooking;
+  bool get amountCooking => _isCooking;
 
-  set amountCooking(int value) {
-    _amountCooking = value;
+  set amountCooking(bool value) {
+    _isCooking = value;
   }
 
   int get amountEating => _amountEating;
@@ -62,7 +64,6 @@ class Reservation extends DatabaseItem implements Comparable<Reservation> {
     _date = value;
   }
 
-
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -71,7 +72,7 @@ class Reservation extends DatabaseItem implements Comparable<Reservation> {
           _date.isSameDate(other._date) &&
           _groupId == other._groupId &&
           _amountEating == other._amountEating &&
-          _amountCooking == other._amountCooking &&
+          _isCooking == other._isCooking &&
           _user == other._user;
 
   @override
@@ -79,7 +80,7 @@ class Reservation extends DatabaseItem implements Comparable<Reservation> {
       _date.hashCode ^
       _groupId.hashCode ^
       _amountEating.hashCode ^
-      _amountCooking.hashCode ^
+      _isCooking.hashCode ^
       _user.hashCode;
 
   @override
@@ -93,7 +94,8 @@ class Reservation extends DatabaseItem implements Comparable<Reservation> {
       return null;
     } else if (this._date.isSameDate(other.date)) {
       return 0;
-    } else if (this.date.millisecondsSinceEpoch > other.date.millisecondsSinceEpoch) {
+    } else if (this.date.millisecondsSinceEpoch >
+        other.date.millisecondsSinceEpoch) {
       return 1;
     }
     return -1;
@@ -101,7 +103,6 @@ class Reservation extends DatabaseItem implements Comparable<Reservation> {
 
   @override
   String toString() {
-    return 'Reservation{_date: $_date, _groupId: $_groupId, _amountEating: $_amountEating, _amountCooking: $_amountCooking, _user: $_user}';
+    return 'Reservation{_date: $_date, _groupId: $_groupId, _amountEating: $_amountEating, _amountCooking: $_isCooking, _user: $_user}';
   }
 }
-

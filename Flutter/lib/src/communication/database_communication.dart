@@ -45,7 +45,7 @@ class DatabaseCommunication {
      "CREATE TABLE users(id INTEGER PRIMARY KEY NOT NULL, name TEXT, email TEXT)",
     '''CREATE TABLE reservations(user_group INTEGER NOT NULL,
      user INTEGER NOT NULL, date TEXT NOT NULL, 
-     amountEating INTEGER, amountCooking INTEGER, 
+     amountEating INTEGER, isCooking BOOLEAN, 
      FOREIGN KEY (user) REFERENCES users (id), 
      FOREIGN KEY (user_group) REFERENCES user_groups (id), 
      PRIMARY KEY (user_group, user, date))'''];

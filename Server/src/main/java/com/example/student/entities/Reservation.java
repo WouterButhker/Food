@@ -21,7 +21,7 @@ public class Reservation {
     private Group group;
 
     @Column(name = "amount_cooking")
-    private int amountCooking;
+    private boolean isCooking;
 
     @Column(name = "amount_eating")
     private int amountEating;
@@ -30,11 +30,11 @@ public class Reservation {
 
     }
 
-    public Reservation(User user, Group group, Date my_date, int amountCooking, int amountEating) {
+    public Reservation(User user, Group group, Date my_date, boolean isCooking, int amountEating) {
         this.reservationKey = new ReservationKey(my_date, user.getId(), group.getId());
         this.user = user;
         this.group = group;
-        this.amountCooking = amountCooking;
+        this.isCooking = isCooking;
         this.amountEating = amountEating;
     }
 
@@ -43,7 +43,7 @@ public class Reservation {
         if (this == o) return true;
         if (!(o instanceof Reservation)) return false;
         Reservation that = (Reservation) o;
-        return amountCooking == that.amountCooking &&
+        return isCooking == that.isCooking &&
                 amountEating == that.amountEating &&
                 Objects.equals(reservationKey, that.reservationKey) &&
                 Objects.equals(user, that.user) &&
@@ -53,7 +53,7 @@ public class Reservation {
 
     @Override
     public int hashCode() {
-        return Objects.hash(reservationKey, user, group, amountCooking, amountEating);
+        return Objects.hash(reservationKey, user, group, isCooking, amountEating);
     }
 
     public ReservationKey getReservationKey() {
@@ -88,12 +88,12 @@ public class Reservation {
         this.reservationKey.setMyDate(date);
     }
 
-    public int getAmountCooking() {
-        return amountCooking;
+    public boolean getIsCooking() {
+        return isCooking;
     }
 
-    public void setAmountCooking(int amountCooking) {
-        this.amountCooking = amountCooking;
+    public void setIsCooking(boolean amountCooking) {
+        this.isCooking = amountCooking;
     }
 
     public int getAmountEating() {
@@ -110,7 +110,7 @@ public class Reservation {
                 "user=" + user +
                 ", group=" + group +
                 ", date='" + this.getDate() + "'" +
-                ", amountCooking=" + amountCooking +
+                ", isCooking=" + isCooking +
                 ", amountEating=" + amountEating +
                 '}';
     }
