@@ -126,12 +126,15 @@ class DaySummaryModel with ChangeNotifier {
   int notResponded = 0;
   String cook = "?";
 
+  // TODO: get values from language helper
   String eatingText = " Eten mee";
   String notEatingText = " Eten niet mee";
   String notRespondedText = " Hebben niet gereageerd";
   String cookText = " Kookt";
 
-  DaySummaryModel() ;
+  DaySummaryModel(){
+    init();
+  }
 
   void init() {
     this.eating = 0;

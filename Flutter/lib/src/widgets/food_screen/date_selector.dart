@@ -7,9 +7,13 @@ class DateSelector extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: <Widget>[
         Container(
-          child: RawMaterialButton(
+
+          child: FlatButton(
+            color: Colors.orange,
+
             child: Icon(Icons.chevron_left),
             onPressed: () {
               Provider.of<DateSelectionModel>(context, listen: false)
@@ -31,10 +35,13 @@ class DateSelector extends StatelessWidget {
                   .goToSpecificDay(value);
             });
           },
-          child: Text(
-            LanguageHelper.dayViewDate(
-                Provider.of<DateSelectionModel>(context).selectedDate, context),
-            textScaleFactor: 2.4,
+          child: FittedBox(
+            fit: BoxFit.contain,
+            child: Text(
+              LanguageHelper.dayViewDate(
+                  Provider.of<DateSelectionModel>(context).selectedDate, context),
+              textScaleFactor: 2.3,
+            ),
           ),
         )),
         Container(
@@ -47,7 +54,6 @@ class DateSelector extends StatelessWidget {
           ),
         ),
       ],
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
     );
   }
 }
