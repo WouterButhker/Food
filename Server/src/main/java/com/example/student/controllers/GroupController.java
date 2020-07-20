@@ -5,7 +5,6 @@ import com.example.student.entities.Group;
 import com.example.student.entities.GroupUserPermission;
 import com.example.student.entities.User;
 import com.example.student.exceptions.AlreadyExistsException;
-import com.example.student.exceptions.GroupNotFoundException;
 import com.example.student.repositories.GroupRepository;
 import com.example.student.repositories.GroupUserPermissionRepository;
 import com.example.student.repositories.UserRepository;
@@ -13,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -46,10 +46,8 @@ public class GroupController {
         User user = userRepository.findByEmailAddress(principal.getName());
 
         List<GroupUserPermission> userPermissionGroups = groupUserPermissionRepository.findAllByUser(user);
-        if (userPermissionGroups.size() == 0) throw new GroupNotFoundException();
+        if (userPermissionGroups.size() == 0) return new ArrayList<Group>();
 
-        List<Group> userGroups = groupRepository.findAllByGroupUserPermissionsIn(userPermissionGroups);
-
-        return userGroups;
+        return groupRepository.findAllByGroupUserPermissionsIn(userPermissionGroups);
     }
 }

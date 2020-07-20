@@ -36,7 +36,13 @@ class LoginScreen extends StatelessWidget {
                       child: Text("Login"),
                       onPressed: () {
                         _login(context);
-                      })
+                      }),
+                  RaisedButton(
+                    child: Text("Register"),
+                    onPressed: () {
+                      Navigator.of(context).pushNamed("/register");
+                    },
+                  )
                 ],
               ),
             ),

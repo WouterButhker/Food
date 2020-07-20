@@ -42,7 +42,10 @@ class LoginController {
     User user = new User(email, name, password);
     Response res = await ServerCommunication.register(user);
     if (res.statusCode == 200 || res.statusCode == 202) {
-      //Navigator.pushReplacementNamed(context, '/login');
+      Navigator.pushReplacementNamed(context, '/login');
+      _saveUserData(email, int.parse(res.body));
+
+      // TODO show message to confirm email
     }
   }
 

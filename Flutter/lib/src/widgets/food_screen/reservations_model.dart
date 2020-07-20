@@ -16,7 +16,7 @@ class ReservationModel extends ChangeNotifier {
     print("CREATE RESERVATIONMODEL");
     reservations.add(Reservation(1, DateTime.now(), 35, amountEating: 1));
     reservations.add(Reservation(1, DateTime.now(), 36, amountEating: 1));
-    reservations.add(Reservation(1, DateTime.now().add(Duration(days: 1)), 37, amountCooking: 1, amountEating: 1));
+    reservations.add(Reservation(1, DateTime.now().add(Duration(days: 1)), 37, isCooking: true, amountEating: 1));
 
 //    reservations.sort();
 //

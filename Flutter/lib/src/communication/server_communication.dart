@@ -114,6 +114,19 @@ class ServerCommunication {
     return res;
   }
 
+  static Future<http.Response> register(User user) async {
+    String url = _host + "/users/register";
+    var json = jsonEncode(user);
+    print("POST request to " + url + " With body: '" + json + "'");
+
+    http.Response res = await http.post(url,
+        headers: {HttpHeaders.contentTypeHeader: "application/json"},
+        body: json);
+
+    print("Response " + res.statusCode.toString() + ': ' + res.body.toString());
+    return res;
+  }
+
   static Future<http.StreamedResponse> uploadProfilePicture(File image) async {
     return await _authenticatedMultiPart("/users/picture", image);
   }
@@ -126,12 +139,7 @@ class ServerCommunication {
     return await _authenticatedPut("/reserve", res);
   }
 
-  static Future<http.Response> register(User user) async {
-    return await http.post(_host + "/users/register",
-        headers: {HttpHeaders.contentTypeHeader: "application/json"},
-        body: jsonEncode(user));
-    //return await authenticatedPost("/users/register", user);
-  }
+
 
   static Future<http.Response> addGroup(String name) async {
     Group group = new Group.onlyName(name);
