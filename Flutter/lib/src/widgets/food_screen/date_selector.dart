@@ -10,7 +10,7 @@ class DateSelector extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: <Widget>[
         Container(
-
+      width: 50,
           child: FlatButton(
             color: Colors.orange,
 

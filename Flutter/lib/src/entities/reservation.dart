@@ -20,11 +20,11 @@ class Reservation extends DatabaseItem implements Comparable<Reservation> {
   }
 
   Reservation.fromJson(Map<String, dynamic> json)
-      : _date = DateTime.parse(json['date']),
-        _groupId = json['groupId'],
+      : _date = DateTime.parse(json["reservationKey"]['myDate']),
+        _groupId = json["reservationKey"]['groupId'],
         _amountEating = json['amountEating'],
         _isCooking = json['isCooking'],
-        _user = json['userId'];
+        _user = json["reservationKey"]['userId'];
 
   Map<String, dynamic> toJson() => {
         'date': _date.toIso8601String(),
@@ -40,9 +40,9 @@ class Reservation extends DatabaseItem implements Comparable<Reservation> {
     _user = value;
   }
 
-  bool get amountCooking => _isCooking;
+  bool get isCooking => _isCooking;
 
-  set amountCooking(bool value) {
+  set isCooking(bool value) {
     _isCooking = value;
   }
 
@@ -103,6 +103,6 @@ class Reservation extends DatabaseItem implements Comparable<Reservation> {
 
   @override
   String toString() {
-    return 'Reservation{_date: $_date, _groupId: $_groupId, _amountEating: $_amountEating, _amountCooking: $_isCooking, _user: $_user}';
+    return 'Reservation{_date: $_date, _groupId: $_groupId, _amountEating: $_amountEating, _isCooking: $_isCooking, _user: $_user}';
   }
 }

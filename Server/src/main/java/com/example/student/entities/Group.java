@@ -23,6 +23,7 @@ public class Group {
     @OneToMany(mappedBy = "group")
     Set<GroupUserPermission> groupUserPermissions = new HashSet<>();
 
+    @JsonIgnore
     @OneToMany(mappedBy = "group")
     Set<Reservation> reservations = new HashSet<>();
 

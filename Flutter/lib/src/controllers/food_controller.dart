@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:student/src/communication/database_communication.dart';
 import 'package:student/src/communication/server_communication.dart';
@@ -11,73 +12,35 @@ import 'package:student/src/entities/user.dart';
 import 'package:student/src/models/language_model.dart';
 
 class FoodController {
-  static void yes() async {
-//    Reservation _res =
-//        Reservation("Samballen", DateTime.now(), 1, amountEating: 1);
-//    String _json = jsonEncode(_res);
-//    print(_json);
-//    ServerCommunication.sendReservation(_res).then((val) {
-//      print(val.statusCode);
-//    });
-    Response res = await ServerCommunication.getUserGroups();
-    List<Group> groups = Group.getListFromJson(res.body);
-    print(groups.toString());
+  static void yes(DateTime date, Group group) async {
+    final prefs = await SharedPreferences.getInstance();
+    Reservation res = Reservation(group.id, date, prefs.getInt("userId"), amountEating: 1);
+    ServerCommunication.sendReservation(res);
   }
 
-  static void no() {
-//    User user = new User("p@inda", "Pinda", "pass");
-//    ServerCommunication.register(user).then((res) {
-//      if (res.statusCode == 200) {
-//      } else if (res.statusCode == 403) {
-//        print("Not authorized");
-//      } else {
-//       // Map<String, dynamic> json = jsonDecode(res.body);
-//        print("Error " + res.statusCode.toString()); //+ ": " + json["message"]);
-//      }
-//    });
-//            DatabaseCommunication.initDatabase().then((db) {
-//              db.query("users").then((val) {
-//                print(val);
-//              });
-//            });
-
-//            user.addToDatabase();
-//            DatabaseCommunication.getAllUsers().then((val) {
-//              print(val);
-//              print("all users printed");
-//            }).catchError((err) => print(err));
+  static void no(DateTime date, Group group) async {
+    final prefs = await SharedPreferences.getInstance();
+    Reservation res = Reservation(group.id, date, prefs.getInt("userId"), amountEating: 0);
+    ServerCommunication.sendReservation(res);
   }
 
-  static void cook() async {
-//    Response res = await ServerCommunication.addGroup("BIERR");
-//    Map<String, dynamic> json = jsonDecode(res.body);
-//    Group group = new Group.fromJson(json);
-//    print(group);
-//    group.addToDatabase();
-//
-//    List<Group> groups = await DatabaseCommunication.getAllGroupsFromUser();
-//    int id = groups.elementAt(0).id;
-//    var response = await ServerCommunication.getUsersFromGroup(id);
-//
-//    print(groups);
-//
-//    print("all users (in group 0) " + response.body.toString());
-//    List<User> users = await DatabaseCommunication.getAllUsers();
-//    print(users);
+  static void cook(DateTime date, Group group) async {
+    final prefs = await SharedPreferences.getInstance();
+    Reservation res = Reservation(group.id, date, prefs.getInt("userId"), amountEating: 1, isCooking: true);
+    ServerCommunication.sendReservation(res);
   }
 
-  static void maybe() {
-    //ServerCommunication.getAllReservations(1);
+  static void maybe(DateTime date, Group group) async {
+    final prefs = await SharedPreferences.getInstance();
+    Reservation res = Reservation(group.id, date, prefs.getInt("userId"));
+    ServerCommunication.deleteReservation(res);
   }
 
-  static void custom(int amountEating, int amountCooking) {
-    //DatabaseCommunication.reCreateDatabase();
-    //ServerCommunication.authenticatedGet("/mail");
+  static void custom(DateTime date, Group group, {int amountEating: 1, bool isCooking: false}) async {
+    final prefs = await SharedPreferences.getInstance();
+    Reservation res = Reservation(group.id, date, prefs.getInt("userId"), amountEating: amountEating, isCooking: isCooking);
+    ServerCommunication.sendReservation(res);
   }
 
-  static List<User> getUsersInGroup(Group group) {
-
-  }
-
-
+  static List<User> getUsersInGroup(Group group) {}
 }

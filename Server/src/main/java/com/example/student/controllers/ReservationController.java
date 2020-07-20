@@ -15,8 +15,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -46,61 +48,68 @@ public class ReservationController {
 
     @PutMapping(path = "/reserve", consumes = MediaType.APPLICATION_JSON_VALUE)
     void makeReservation(@RequestBody String json) {
-        System.out.println(json);
-        //Reservation res = new Gson().fromJson(json, Reservation.class);
+
 
         Reservation res = parseReservation(json);
-        //System.out.println(res);
-        reservationRepository.save(res);
-        res = reservationRepository.findAll().get(0);
-        System.out.println(reservationRepository.findAll().toString());
-
-
-//        Group g = groupRepository.findByName("Group1").get();
-//        User p = userRepository.findUserById(1);
-//
-//        Date date = new Date(System.currentTimeMillis());
-//        Reservation res = new Reservation(p, g, date, 0, 1);
-//        reservationRepository.save(res);
-//
-//        res = reservationRepository.findAll().get(0);
-//        System.out.println(res);
-//        System.out.println(res.getReservationKey().getMyDate());
+        res = reservationRepository.save(res);
+        System.out.println("New reservation: " + res);
 
     }
 
     @GetMapping(path = "/reservations/all")
     List<Reservation> getAllReservations(@RequestParam int groupId) {
-
         return reservationRepository.findAllByReservationKeyGroupId(groupId);
+    }
+
+    @DeleteMapping(path = "/reservations/delete")
+    void deleteReservation(@RequestParam int groupId, @RequestParam String date, Principal principal) {
+
+        User user = userRepository.findByEmailAddress(principal.getName());
+        Date parsedDate = parseDate(date);
+
+        Reservation res = reservationRepository.findByReservationKeyMyDateAndReservationKeyGroupIdAndUser(parsedDate, groupId, user);
+
+        if (res != null) {
+            reservationRepository.delete(res);
+            System.out.println("DELETED reservation: " + res);
+        }
+
     }
 
     private Reservation parseReservation(String json)
             throws UserNotFoundException, GroupNotFoundException, IncorrectDateException {
         JsonObject obj = new Gson().fromJson(json, JsonObject.class);
-        int userInt = obj.get("user").getAsInt();
-        String groupStr = obj.get("group").getAsString();
+        int userInt = obj.get("userId").getAsInt();
+        int groupId = obj.get("groupId").getAsInt();
 
         if (userRepository.findUserById(userInt).isEmpty()) {
             throw new UserNotFoundException();
         }
-        if (groupRepository.findByName(groupStr).isEmpty()) {
+        if (groupRepository.findById(groupId).isEmpty()) {
             throw new GroupNotFoundException();
         }
 
         User user = userRepository.findUserById(userInt).get();
-        Group group = groupRepository.findByName(groupStr).get();
+        Group group = groupRepository.findById(groupId).get();
 
+        Date date = parseDate(obj.get("date").getAsString());
+
+        return new Reservation(user, group,
+                date,
+                obj.get("isCooking").getAsBoolean(), obj.get("amountEating").getAsInt());
+    }
+
+    private Date parseDate(String date) {
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
-        Date date = new Date();
         try {
-            date = formatter.parse(obj.get("date").getAsString());
+            Date newDate = formatter.parse(date);
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(newDate);
+            calendar.add(Calendar.HOUR, 12);
+            return calendar.getTime();
         } catch (ParseException e) {
             throw new IncorrectDateException();
         }
 
-        return new Reservation(user, group,
-                date,
-                obj.get("amountCooking").getAsBoolean(), obj.get("amountEating").getAsInt());
     }
 }

@@ -1,5 +1,7 @@
 package com.example.student.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 import java.util.Date;
 import java.util.Objects;
@@ -10,17 +12,19 @@ public class Reservation {
     @EmbeddedId
     ReservationKey reservationKey;
 
+    @JsonIgnore
     @ManyToOne
     @MapsId("userId")
     @JoinColumn(name = "user_id")
     private User user;
 
+    @JsonIgnore
     @ManyToOne
     @MapsId("groupId")
     @JoinColumn(name = "group_id")
     private Group group;
 
-    @Column(name = "amount_cooking")
+    @Column(name = "is_cooking")
     private boolean isCooking;
 
     @Column(name = "amount_eating")

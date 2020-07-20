@@ -138,6 +138,10 @@ class ServerCommunication {
   static Future<http.Response> sendReservation(Reservation res) async {
     return await _authenticatedPut("/reserve", res);
   }
+  
+  static Future<http.Response> deleteReservation(Reservation res) async {
+    return await _authenticatedDelete("/reservations/delete?groupId=" + res.group.toString() + "&date=" + res.date.toIso8601String());
+  }
 
 
 
@@ -146,9 +150,9 @@ class ServerCommunication {
     return await _authenticatedPost("/groups/add", group);
   }
 
-  static Future<List<Reservation>> getAllReservations(int groupId) async {
+  static Future<http.Response> getAllReservations(int groupId) async {
     //TODO
-    await _authenticatedGet("/reservations/all?groupId=" + groupId.toString());
+    return await _authenticatedGet("/reservations/all?groupId=" + groupId.toString());
   }
 
   static Future<http.Response> getUsersFromGroup(int groupId) async {

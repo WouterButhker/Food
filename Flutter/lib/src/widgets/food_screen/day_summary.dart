@@ -158,9 +158,7 @@ class DaySummaryModel with ChangeNotifier {
           notEating++;
         }
         // TODO: get notResponded number
-
-        // TODO: change amountCooking to boolean
-        if (res.amountCooking != 0) {
+        if (res.isCooking) {
           // TODO: get user name
           cook = res.user.toString();
         }

@@ -1,10 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:student/src/controllers/food_controller.dart';
+import 'package:student/src/entities/group.dart';
 import 'package:student/src/icons/chef_hat_icons.dart';
 import 'package:student/src/models/language_model.dart';
+import 'package:student/src/widgets/food_screen/day_summary.dart';
 
 class ChoiceButtons extends StatelessWidget {
+  final Group group;
+
+  const ChoiceButtons({Key key, this.group}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return Row(
@@ -14,7 +20,7 @@ class ChoiceButtons extends StatelessWidget {
         RawMaterialButton(
           constraints: BoxConstraints.tightFor(height: 40, width: 40),
           onPressed: () {
-            FoodController.yes();
+            FoodController.yes(Provider.of<DateSelectionModel>(context, listen: false).selectedDate, group);
           },
           // alone
           onLongPress: () {},
@@ -30,7 +36,7 @@ class ChoiceButtons extends StatelessWidget {
         RawMaterialButton(
           constraints: BoxConstraints.tightFor(height: 40, width: 40),
           onPressed: () {
-            FoodController.no();
+            FoodController.no(Provider.of<DateSelectionModel>(context, listen: false).selectedDate, group);
           },
           child: Icon(
             Icons.close,
@@ -43,7 +49,7 @@ class ChoiceButtons extends StatelessWidget {
         RawMaterialButton(
           constraints: BoxConstraints.tightFor(height: 40, width: 40),
           onPressed: () {
-            FoodController.cook();
+            FoodController.cook(Provider.of<DateSelectionModel>(context, listen: false).selectedDate, group);
           },
           child: Icon(
             ChefHat.cooking_chef_cap,
@@ -56,7 +62,7 @@ class ChoiceButtons extends StatelessWidget {
         RawMaterialButton(
           constraints: BoxConstraints.tightFor(height: 40, width: 40),
           onPressed: () {
-            FoodController.maybe();
+            FoodController.maybe(Provider.of<DateSelectionModel>(context, listen: false).selectedDate, group);
           },
           child: Text(
             "?",
@@ -74,9 +80,7 @@ class ChoiceButtons extends StatelessWidget {
           constraints: BoxConstraints.tightFor(height: 40, width: 40),
           onPressed: () {
             // TODO: add popup
-            //FoodController.custom(0, 0);
-            Provider.of<LanguageModel>(context, listen: false)
-                .changeLanguage(Locale('nl'));
+            FoodController.custom(Provider.of<DateSelectionModel>(context, listen: false).selectedDate, group, amountEating: 5);
           },
           child: Text(
             "...",

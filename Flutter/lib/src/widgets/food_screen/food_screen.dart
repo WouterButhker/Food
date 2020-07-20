@@ -31,7 +31,7 @@ class FoodScreen extends StatelessWidget {
               child: DateSelector(),
               margin: EdgeInsets.all(10),
             ),
-            ChoiceButtons(),
+            ChoiceButtons(group: this.userGroup),
             Container(
               child: DaySummary(this.userGroup),
               margin: EdgeInsets.all(20),
