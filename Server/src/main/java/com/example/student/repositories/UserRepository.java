@@ -4,7 +4,6 @@ import com.example.student.entities.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import javax.transaction.Transactional;
-import java.util.List;
 import java.util.Optional;
 
 @Transactional
@@ -17,5 +16,7 @@ public interface UserRepository extends JpaRepository<User, Integer> {
     boolean deleteByEmailAddress(String emailAddress);
 
     boolean existsByEmailAddress(String emailAddress);
+
+
 
 }

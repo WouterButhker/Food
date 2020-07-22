@@ -8,7 +8,7 @@ import 'package:intl/intl.dart';
 class LanguageHelper {
 
   static String dayViewDate(DateTime date, BuildContext context) {
-    print('LanguageHelper.dayViewDate');
+    //print('LanguageHelper.dayViewDate');
     DateFormat dateFormat = DateFormat.MMMd(AppLocalizations.of(context).locale.toString());
     if (date.isSameDate(DateTime.now())) {
         return AppLocalizations.of(context).translate("today") + " " +  dateFormat.format(date);

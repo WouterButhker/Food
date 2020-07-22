@@ -104,6 +104,29 @@ public class UserController {
         return new User(email, name, pass, false);
     }
 
+    @GetMapping(path = "/getUserName")
+    String getUserName(@RequestParam int userId) {
+        if (userRepository.findUserById(userId).isPresent()) {
+            return userRepository.findUserById(userId).get().getName();
+        }
+
+        throw new UserNotFoundException();
+    }
+
+    @GetMapping("/getUsersInGroup")
+    List<User> getUsersInGroup(@RequestParam int groupId) {
+        if (groupRepository.findById(groupId).isEmpty()) throw new GroupNotFoundException();
+        Group group = groupRepository.findById(groupId).get();
+        List<GroupUserPermission> groupUserPermissions = groupUserPermissionRepository.findAllByGroup(group);
+        List<User> usersInGroup = new ArrayList<>();
+
+        for (GroupUserPermission groupUserPermission : groupUserPermissions) {
+            usersInGroup.add(groupUserPermission.getUser());
+        }
+
+        return usersInGroup;
+    }
+
     /**
      * gets all users from a specific group
      * @param groupId the groupId to get the users from

@@ -8,11 +8,13 @@ class User extends DatabaseItem {
   String _email;
   String _name;
   String _password;
+  int _id;
 
-  User(this._email, this._name, this._password);
+  User(this._id, this._email, this._name, this._password);
 
   User.fromJson(Map<String, dynamic> json)
-      : _email = json['email'],
+      : _id = json['id'],
+        _email = json['email'],
         _name = json['name'],
         _password = json['password'];
 
@@ -21,13 +23,18 @@ class User extends DatabaseItem {
   }
 
   Map<String, dynamic> toJson() =>
-      {'email': _email, 'name': _name, 'password': _password};
+      {'id': _id, 'email': _email, 'name': _name, 'password': _password};
 
   Future<void> addToDatabase() async {
     return await super.addToDatabaseByName("users");
   }
 
   String get email => _email;
+  int get id => _id;
+  String get name => _name;
 
-
+  @override
+  String toString() {
+    return 'User{_email: $_email, _name: $_name, _password: $_password}';
+  }
 }

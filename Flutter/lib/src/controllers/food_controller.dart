@@ -42,5 +42,16 @@ class FoodController {
     ServerCommunication.sendReservation(res);
   }
 
-  static List<User> getUsersInGroup(Group group) {}
+  static Future<List<Reservation>> getAllReservations(int groupId) async {
+    Response res = await ServerCommunication.getAllReservations(groupId);
+    Iterable i = json.decode(res.body);
+    return List<Reservation>.from(i.map((val) => Reservation.fromJson(val)));
+  }
+
+  static Future<List<User>> getUsersInGroup(int groupId) async {
+    Response res = await ServerCommunication.getUsersInGroup(groupId);
+    Iterable i = json.decode(res.body);
+    return List<User>.from(i.map((val) => User.fromJson(val)));
+  }
+
 }

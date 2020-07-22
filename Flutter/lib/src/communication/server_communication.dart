@@ -117,7 +117,7 @@ class ServerCommunication {
   static Future<http.Response> register(User user) async {
     String url = _host + "/users/register";
     var json = jsonEncode(user);
-    print("POST request to " + url + " With body: '" + json + "'");
+    print("POST request (no auth) to " + url + " With body: '" + json + "'");
 
     http.Response res = await http.post(url,
         headers: {HttpHeaders.contentTypeHeader: "application/json"},
@@ -143,8 +143,6 @@ class ServerCommunication {
     return await _authenticatedDelete("/reservations/delete?groupId=" + res.group.toString() + "&date=" + res.date.toIso8601String());
   }
 
-
-
   static Future<http.Response> addGroup(String name) async {
     Group group = new Group.onlyName(name);
     return await _authenticatedPost("/groups/add", group);
@@ -155,9 +153,9 @@ class ServerCommunication {
     return await _authenticatedGet("/reservations/all?groupId=" + groupId.toString());
   }
 
-  static Future<http.Response> getUsersFromGroup(int groupId) async {
-    return await _authenticatedGet("/users/get");
-  }
+//  static Future<http.Response> getUsersFromGroup(int groupId) async {
+//    return await _authenticatedGet("/users/get");
+//  }
 
   static String getProfilePictureLink(String email) {
     return _host + "/users/picture?user=" + email;
@@ -171,6 +169,14 @@ class ServerCommunication {
   static Future<http.Response> getUserGroups() async {
     http.Response res = await _authenticatedGet("/groups/getUserGroups");
     return res;
+  }
+
+  static Future<http.Response> getUserName(int userId) async {
+    return await _authenticatedGet("/users/getUserName?userId=" + userId.toString());
+  }
+
+  static Future<http.Response> getUsersInGroup(int groupId) async {
+    return await _authenticatedGet("/users/getUsersInGroup?groupId=" + groupId.toString());
   }
 
 }

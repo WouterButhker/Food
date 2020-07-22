@@ -50,4 +50,6 @@ public class GroupController {
 
         return groupRepository.findAllByGroupUserPermissionsIn(userPermissionGroups);
     }
+
+
 }

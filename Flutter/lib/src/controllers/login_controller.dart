@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/widgets.dart';
 import 'package:http/http.dart';
 import 'package:password_strength/password_strength.dart';
@@ -39,11 +41,12 @@ class LoginController {
   }
 
   static void register(String email, String name, String password, bool marketing, context) async {
-    User user = new User(email, name, password);
+    User user = new User(null, email, name, password);
     Response res = await ServerCommunication.register(user);
     if (res.statusCode == 200 || res.statusCode == 202) {
       Navigator.pushReplacementNamed(context, '/login');
-      _saveUserData(email, int.parse(res.body));
+      user = json.decode(res.body);
+      _saveUserData(email, user.id);
 
       // TODO show message to confirm email
     }

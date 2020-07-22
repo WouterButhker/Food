@@ -14,4 +14,6 @@ public interface GroupRepository extends JpaRepository<Group, Integer> {
     Optional<Group> findByName(String name);
 
     List<Group> findAllByGroupUserPermissionsIn(List<GroupUserPermission> groupUserPermissions);
+
+
 }

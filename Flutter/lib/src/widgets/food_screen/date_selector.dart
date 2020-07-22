@@ -3,6 +3,8 @@ import 'package:provider/provider.dart';
 import 'package:student/src/controllers/language_helper.dart';
 import 'package:student/src/widgets/food_screen/day_summary.dart';
 
+import 'models/date_selection_model.dart';
+
 class DateSelector extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -12,7 +14,7 @@ class DateSelector extends StatelessWidget {
         Container(
       width: 50,
           child: FlatButton(
-            color: Colors.orange,
+//            color: Colors.orange,
 
             child: Icon(Icons.chevron_left),
             onPressed: () {

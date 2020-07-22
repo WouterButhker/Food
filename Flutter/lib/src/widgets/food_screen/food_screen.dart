@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:student/src/entities/group.dart';
-import 'package:student/src/widgets/food_screen/reservations_model.dart';
-import 'package:student/src/widgets/food_screen/week_view.dart';
-
 import 'day_summary.dart';
 import 'day_view.dart';
 import 'choice_buttons.dart';
 import 'date_selector.dart';
+import 'models/date_selection_model.dart';
+import 'models/reservations_model.dart';
 
 class FoodScreen extends StatelessWidget {
   final Group userGroup;

@@ -1,5 +1,6 @@
 package com.example.student.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -16,12 +17,13 @@ public class User implements UserDetails {
     @Column(name = "id", nullable = false)
     private Integer id;
 
-    @Column(name = "emailAddress", unique = true, nullable = false)
+    @Column(name = "email_address", unique = true, nullable = false)
     private String emailAddress;
 
     @Column(name = "name")
     private String name;
 
+    @JsonIgnore
     @Column(name = "password", nullable = false, length = 60)
     private String password;
 
@@ -30,9 +32,11 @@ public class User implements UserDetails {
     @Column(name = "enabled")
     private boolean accountIsEnabled = false;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "user")
     Set<GroupUserPermission> groupUserPermissions = new HashSet<>();
 
+    @JsonIgnore
     @OneToMany(mappedBy = "user")
     Set<Reservation> reservations = new HashSet<>();
 

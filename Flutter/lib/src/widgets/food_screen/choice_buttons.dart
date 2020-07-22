@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:path/path.dart';
 import 'package:provider/provider.dart';
 import 'package:student/src/controllers/food_controller.dart';
 import 'package:student/src/entities/group.dart';
 import 'package:student/src/icons/chef_hat_icons.dart';
 import 'package:student/src/models/language_model.dart';
 import 'package:student/src/widgets/food_screen/day_summary.dart';
+
+import 'models/date_selection_model.dart';
 
 class ChoiceButtons extends StatelessWidget {
   final Group group;
@@ -20,7 +23,10 @@ class ChoiceButtons extends StatelessWidget {
         RawMaterialButton(
           constraints: BoxConstraints.tightFor(height: 40, width: 40),
           onPressed: () {
-            FoodController.yes(Provider.of<DateSelectionModel>(context, listen: false).selectedDate, group);
+            FoodController.yes(
+                Provider.of<DateSelectionModel>(context, listen: false)
+                    .selectedDate,
+                group);
           },
           // alone
           onLongPress: () {},
@@ -36,7 +42,10 @@ class ChoiceButtons extends StatelessWidget {
         RawMaterialButton(
           constraints: BoxConstraints.tightFor(height: 40, width: 40),
           onPressed: () {
-            FoodController.no(Provider.of<DateSelectionModel>(context, listen: false).selectedDate, group);
+            FoodController.no(
+                Provider.of<DateSelectionModel>(context, listen: false)
+                    .selectedDate,
+                group);
           },
           child: Icon(
             Icons.close,
@@ -49,7 +58,10 @@ class ChoiceButtons extends StatelessWidget {
         RawMaterialButton(
           constraints: BoxConstraints.tightFor(height: 40, width: 40),
           onPressed: () {
-            FoodController.cook(Provider.of<DateSelectionModel>(context, listen: false).selectedDate, group);
+            FoodController.cook(
+                Provider.of<DateSelectionModel>(context, listen: false)
+                    .selectedDate,
+                group);
           },
           child: Icon(
             ChefHat.cooking_chef_cap,
@@ -62,7 +74,10 @@ class ChoiceButtons extends StatelessWidget {
         RawMaterialButton(
           constraints: BoxConstraints.tightFor(height: 40, width: 40),
           onPressed: () {
-            FoodController.maybe(Provider.of<DateSelectionModel>(context, listen: false).selectedDate, group);
+            FoodController.maybe(
+                Provider.of<DateSelectionModel>(context, listen: false)
+                    .selectedDate,
+                group);
           },
           child: Text(
             "?",
@@ -80,7 +95,12 @@ class ChoiceButtons extends StatelessWidget {
           constraints: BoxConstraints.tightFor(height: 40, width: 40),
           onPressed: () {
             // TODO: add popup
-            FoodController.custom(Provider.of<DateSelectionModel>(context, listen: false).selectedDate, group, amountEating: 5);
+//            FoodController.custom(
+//                Provider.of<DateSelectionModel>(context, listen: false)
+//                    .selectedDate,
+//                group,
+//                amountEating: 5);
+          _customDialog(context);
           },
           child: Text(
             "...",
@@ -92,5 +112,36 @@ class ChoiceButtons extends StatelessWidget {
         )
       ],
     );
+  }
+
+  Future _customDialog(BuildContext context) async {
+    return showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text("Title"),
+            content: SingleChildScrollView(
+              child: ListBody(
+                children: <Widget>[
+                  Text("Cooking?"),
+                  Text("Amount?"),
+                ],
+              ),
+            ),
+            actions: <Widget>[
+              FlatButton(
+                child: Text("Cancel"),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+              FlatButton(
+                child: Text("Confirm"),
+                onPressed: () {},
+              ),
+            ],
+          );
+        });
   }
 }
