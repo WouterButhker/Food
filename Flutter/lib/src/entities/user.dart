@@ -4,7 +4,7 @@ import 'package:student/src/communication/database_communication.dart';
 import 'package:student/src/entities/database_item.dart';
 
 @JsonSerializable()
-class User extends DatabaseItem {
+class User extends DatabaseItem implements Comparable<User> {
   String _email;
   String _name;
   String _password;
@@ -36,5 +36,10 @@ class User extends DatabaseItem {
   @override
   String toString() {
     return 'User{_email: $_email, _name: $_name, _password: $_password}';
+  }
+
+  @override
+  int compareTo(User other) {
+    return name.compareTo(other.name);
   }
 }

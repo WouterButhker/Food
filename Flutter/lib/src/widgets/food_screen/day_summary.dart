@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:student/src/entities/group.dart';
 import 'package:student/src/entities/reservation.dart';
+import 'package:student/src/widgets/food_screen/models/day_model.dart';
 
 
 import 'models/date_selection_model.dart';
@@ -16,14 +17,13 @@ class DaySummary extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-      child: ChangeNotifierProxyProvider2<ReservationModel, DateSelectionModel,
+      child: ChangeNotifierProxyProvider<DayModel,
           DaySummaryModel>(
         create: (context) => DaySummaryModel(),
         update: (BuildContext context,
-                ReservationModel reservationModel,
-                DateSelectionModel dateSelectionModel,
+                DayModel dayModel,
                 DaySummaryModel daySummaryModel) =>
-            daySummaryModel..update(dateSelectionModel, reservationModel),
+            daySummaryModel..update(dayModel),
         child: Container(
           margin: EdgeInsets.all(20),
           child: Consumer<DaySummaryModel>(
@@ -85,7 +85,7 @@ class DaySummary extends StatelessWidget {
                             TextSpan(text: summaryData.cookText),
                           ],
                           style: TextStyle(
-                            color: Colors.lightBlueAccent,
+                            color: Colors.blue,
                           ),
                         ),
                       ),

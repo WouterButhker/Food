@@ -12,5 +12,9 @@
   "light" : "Licht",
   "today" : "Vandaag",
   "yesterday" : "Gisteren",
-  "tomorrow" : "Morgen"
+  "tomorrow" : "Morgen",
+  "no_response": "Heeft niet gereageerd",
+  "eating": "Eet mee",
+  "not_eating" : "Eet niet mee",
+  "cooking" : "Kookt"
 }

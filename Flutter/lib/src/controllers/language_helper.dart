@@ -20,5 +20,7 @@ class LanguageHelper {
     return DateFormat.MMMEd(AppLocalizations.of(context).locale.toString()).format(date);
 
   }
+
+
 }
 

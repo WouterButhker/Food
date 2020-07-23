@@ -12,5 +12,9 @@
   "light" : "Light",
   "today" : "Today",
   "yesterday" : "Yesterday",
-  "tomorrow" : "Tomorrow"
+  "tomorrow" : "Tomorrow",
+  "no_response": "Did not respond",
+  "eating": "Is eating",
+  "not_eating" : "Is not eating",
+  "cooking" : "Is cooking"
 }
