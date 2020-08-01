@@ -15,21 +15,44 @@ class ReservationModel extends ChangeNotifier {
   final Group group;
 
   ReservationModel(this.group) {
-//    print("CREATE RESERVATIONMODEL");
-//    reservations.add(Reservation(1, DateTime.now(), 36, amountEating: 1));
-//    reservations.add(Reservation(1, DateTime.now().add(Duration(days: 1)), 37, isCooking: true, amountEating: 1));
-////    reservations.sort();
-////
-////    binarySearch(reservations, Reservation(1, DateTime.now(), 0));
-//    print(reservations);
-
     update();
   }
 
   void update() async {
     reservations = await FoodController.getAllReservations(group.id);
-    print("Reservations: " + reservations.toString());
     notifyListeners();
+    reservations.sort();
+  }
+
+  void addReservation(Reservation res) {
+    if (res == null || reservations.contains(res)) return;
+
+    _deleteReservation(res.date, res.user, res.group);
+    reservations.add(res);
+    notifyListeners();
+    reservations.sort();
+  }
+
+  void deleteReservation(DateTime date, int userId, int groupId) {
+    bool deleted = _deleteReservation(date, userId, groupId);
+    if (deleted) notifyListeners();
+  }
+
+  bool _deleteReservation(DateTime date, int userId, int groupId) {
+    int pos = binarySearch(reservations, Reservation(null, date, null));
+    if (pos == -1) return false;
+
+    for (int i = pos; i < reservations.length; i++) {
+      Reservation res = reservations[i];
+
+      if (!res.date.isSameDate(date)) return false;
+
+      if (res.user == userId && res.group == groupId && res.date.isSameDate(date)) {
+        reservations.removeAt(i);
+        return true;
+      }
+    }
+    return false;
   }
 
   List<Reservation> get getReservations => reservations;

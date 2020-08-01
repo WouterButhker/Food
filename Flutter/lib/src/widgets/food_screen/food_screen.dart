@@ -59,15 +59,19 @@ class FoodScreen extends StatelessWidget {
             ChoiceButtons(group: this.userGroup),
             Container(
               child: Consumer<DayOrWeekModel>(
-                  builder: (context, dayOrWeekModel, child) =>
-                  dayOrWeekModel.dayView ? DaySummary(this.userGroup) : SizedBox.shrink()),
+                builder: (context, dayOrWeekModel, child) =>
+                    dayOrWeekModel.dayView
+                        ? DaySummary(this.userGroup)
+                        : SizedBox.shrink(),
+              ),
               margin: EdgeInsets.all(20),
             ),
             Expanded(
               child: Container(
                 child: Consumer<DayOrWeekModel>(
                   builder: (context, dayOrWeekModel, child) =>
-                      dayOrWeekModel.dayView ? DayListView() : WeekView()),
+                      dayOrWeekModel.dayView ? DayListView() : WeekView(),
+                ),
                 margin: EdgeInsets.fromLTRB(20, 0, 20, 20),
               ),
             )

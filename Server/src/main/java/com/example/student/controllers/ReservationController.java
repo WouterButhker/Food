@@ -47,13 +47,14 @@ public class ReservationController {
 
 
     @PutMapping(path = "/reserve", consumes = MediaType.APPLICATION_JSON_VALUE)
-    void makeReservation(@RequestBody String json) {
+    Reservation makeReservation(@RequestBody String json) {
 
 
         Reservation res = parseReservation(json);
         res = reservationRepository.save(res);
         System.out.println("New reservation: " + res);
 
+        return res;
     }
 
     @GetMapping(path = "/reservations/all")

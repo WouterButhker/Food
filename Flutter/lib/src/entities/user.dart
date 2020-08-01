@@ -40,6 +40,6 @@ class User extends DatabaseItem implements Comparable<User> {
 
   @override
   int compareTo(User other) {
-    return name.compareTo(other.name);
+    return name.toLowerCase().compareTo(other.name.toLowerCase());
   }
 }

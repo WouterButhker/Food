@@ -184,10 +184,11 @@ class _RegisterScreen extends StatelessWidget {
   Widget marketing(context) {
     return CheckboxListTileFormField(
       context: context,
-      title: Text("I want to receive marketing emails"),
+      title: Text("Promotional emails"),
       dense: false,
       onSaved: (val) {
         _marketingMails = val;
+        // TODO
       }
     );
   }

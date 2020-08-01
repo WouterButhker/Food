@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:student/src/entities/reservation.dart';
 import 'package:student/src/entities/user.dart';
 import 'package:student/src/theme/app_localizations.dart';
@@ -14,12 +15,18 @@ class DayListModel extends ChangeNotifier {
     _dayModel = dayModel;
     List<User> users = dayModel.usersInGroup;
     users.sort();
+    //final prefs = await SharedPreferences.getInstance();
+    //int userId = prefs.getInt("userId");
 
     for (User u in users) {
       tiles.add(GridTile(
         child: Align(
           alignment: Alignment.centerLeft,
-          child: Text(u.name),
+          child: Text(u.name,
+          style: TextStyle(
+            // TODO bold own user
+//            fontWeight: u.id == userId ? FontWeight.bold : FontWeight.normal,
+          ),),
         ),
       ));
 

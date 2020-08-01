@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:path/path.dart';
 import 'package:provider/provider.dart';
 import 'package:student/src/controllers/food_controller.dart';
 import 'package:student/src/entities/group.dart';
 import 'package:student/src/icons/chef_hat_icons.dart';
 import 'package:student/src/models/language_model.dart';
+import 'package:student/src/widgets/checkbox_list_tile_form_field.dart';
 import 'package:student/src/widgets/food_screen/day_summary.dart';
+import 'package:student/src/widgets/food_screen/models/day_model.dart';
 
 import 'models/date_selection_model.dart';
 
@@ -24,9 +27,11 @@ class ChoiceButtons extends StatelessWidget {
           constraints: BoxConstraints.tightFor(height: 40, width: 40),
           onPressed: () {
             FoodController.yes(
-                Provider.of<DateSelectionModel>(context, listen: false)
-                    .selectedDate,
-                group);
+              Provider.of<DateSelectionModel>(context, listen: false)
+                  .selectedDate,
+              group,
+              context,
+            );
           },
           // alone
           onLongPress: () {},
@@ -43,9 +48,11 @@ class ChoiceButtons extends StatelessWidget {
           constraints: BoxConstraints.tightFor(height: 40, width: 40),
           onPressed: () {
             FoodController.no(
-                Provider.of<DateSelectionModel>(context, listen: false)
-                    .selectedDate,
-                group);
+              Provider.of<DateSelectionModel>(context, listen: false)
+                  .selectedDate,
+              group,
+              context,
+            );
           },
           child: Icon(
             Icons.close,
@@ -59,9 +66,11 @@ class ChoiceButtons extends StatelessWidget {
           constraints: BoxConstraints.tightFor(height: 40, width: 40),
           onPressed: () {
             FoodController.cook(
-                Provider.of<DateSelectionModel>(context, listen: false)
-                    .selectedDate,
-                group);
+              Provider.of<DateSelectionModel>(context, listen: false)
+                  .selectedDate,
+              group,
+              context,
+            );
           },
           child: Icon(
             ChefHat.cooking_chef_cap,
@@ -75,9 +84,11 @@ class ChoiceButtons extends StatelessWidget {
           constraints: BoxConstraints.tightFor(height: 40, width: 40),
           onPressed: () {
             FoodController.maybe(
-                Provider.of<DateSelectionModel>(context, listen: false)
-                    .selectedDate,
-                group);
+              Provider.of<DateSelectionModel>(context, listen: false)
+                  .selectedDate,
+              group,
+              context,
+            );
           },
           child: Text(
             "?",
@@ -94,13 +105,9 @@ class ChoiceButtons extends StatelessWidget {
         RawMaterialButton(
           constraints: BoxConstraints.tightFor(height: 40, width: 40),
           onPressed: () {
-            // TODO: add popup
-//            FoodController.custom(
-//                Provider.of<DateSelectionModel>(context, listen: false)
-//                    .selectedDate,
-//                group,
-//                amountEating: 5);
-          _customDialog(context);
+            showDialog(
+                context: context,
+                builder: CustomChoiceDialog(this.group, context).build);
           },
           child: Text(
             "...",
@@ -113,35 +120,96 @@ class ChoiceButtons extends StatelessWidget {
       ],
     );
   }
+}
 
-  Future _customDialog(BuildContext context) async {
-    return showDialog(
-        context: context,
-        barrierDismissible: false,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: Text("Title"),
-            content: SingleChildScrollView(
-              child: ListBody(
-                children: <Widget>[
-                  Text("Cooking?"),
-                  Text("Amount?"),
-                ],
-              ),
+// ignore: must_be_immutable
+class CustomChoiceDialog extends StatelessWidget {
+  final FocusNode _userSelectionFocusNode = FocusNode();
+  final FocusNode _amountEatingFocusNode = FocusNode();
+  final FocusNode _isCookingFocusNode = FocusNode();
+
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+
+  final Group _group;
+  final BuildContext _parentContext;
+
+  CustomChoiceDialog(this._group, this._parentContext);
+
+  int user;
+  bool isCooking = false;
+  int amountEating = 1;
+  String notes;
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: Text("Title"),
+      actions: <Widget>[
+        FlatButton(
+          child: Text("Cancel"),
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+        ),
+        FlatButton(
+          child: Text("Confirm"),
+          onPressed: () {
+            _formKey.currentState.save();
+            FoodController.custom(
+              Provider.of<DayModel>(context, listen: false)
+                  .dateSelectionModel
+                  .selectedDate,
+              _group,
+              context,
+            );
+          },
+        ),
+      ],
+      content: Form(
+        key: _formKey,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            DropdownButtonFormField(
+              onChanged: (val) {
+                user = val;
+              },
+              items: Provider.of<DayModel>(_parentContext, listen: false)
+                  .usersInGroup
+                  .map((user) => DropdownMenuItem(
+                        value: user.id,
+                        child: Text(user.name),
+                      ))
+                  .toList(),
             ),
-            actions: <Widget>[
-              FlatButton(
-                child: Text("Cancel"),
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-              ),
-              FlatButton(
-                child: Text("Confirm"),
-                onPressed: () {},
-              ),
-            ],
-          );
-        });
+            TextFormField(
+              keyboardType: TextInputType.number,
+              focusNode: _amountEatingFocusNode,
+              onChanged: (val) {
+                amountEating = int.parse(val);
+              },
+              onTap: () {},
+              onSaved: (val) {},
+              initialValue: "1",
+              inputFormatters: [WhitelistingTextInputFormatter.digitsOnly],
+            ),
+            CheckboxListTileFormField(
+              context: context,
+              onSaved: (val) {
+                isCooking = val;
+              },
+              title: Text("Is cooking"),
+            ),
+            TextFormField(
+              keyboardType: TextInputType.text,
+              onChanged: (val) {
+                notes = val;
+              },
+            )
+          ],
+        ),
+      ),
+    );
   }
 }
+
