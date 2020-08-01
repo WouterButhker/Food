@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:student/src/controllers/language_helper.dart';
 import 'package:student/src/widgets/food_screen/day_summary.dart';
+import 'package:student/src/widgets/food_screen/models/dayOrWeekModel.dart';
 
 import 'models/date_selection_model.dart';
 
@@ -20,6 +21,7 @@ class DateSelector extends StatelessWidget {
             onPressed: () {
               Provider.of<DateSelectionModel>(context, listen: false)
                   .goToPreviousDay();
+              Provider.of<DayOrWeekModel>(context, listen: false).animationController.reverse();
             },
           ),
         ),
@@ -52,6 +54,7 @@ class DateSelector extends StatelessWidget {
             onPressed: () {
               Provider.of<DateSelectionModel>(context, listen: false)
                   .goToNextDay();
+              Provider.of<DayOrWeekModel>(context, listen: false).animationController.forward();
             },
           ),
         ),
