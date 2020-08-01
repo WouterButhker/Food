@@ -84,14 +84,6 @@ public class Reservation {
         this.group = group;
     }
 
-    public Date getDate() {
-        return this.reservationKey.getMyDate();
-    }
-
-    public void setDate(Date date) {
-        this.reservationKey.setMyDate(date);
-    }
-
     public boolean getIsCooking() {
         return isCooking;
     }
@@ -113,7 +105,7 @@ public class Reservation {
         return "Reservation{" +
                 "user=" + user +
                 ", group=" + group +
-                ", date='" + this.getDate() + "'" +
+                ", date='" + reservationKey.getMyDate() + "'" +
                 ", isCooking=" + isCooking +
                 ", amountEating=" + amountEating +
                 '}';
