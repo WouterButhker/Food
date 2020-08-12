@@ -11,7 +11,7 @@ import 'date_selector.dart';
 import 'models/date_selection_model.dart';
 import 'models/reservations_model.dart';
 import 'package:student/src/widgets/food_screen/models/day_model.dart';
-import 'models/dayOrWeekModel.dart';
+
 
 class FoodScreen extends StatelessWidget {
   final Group userGroup;
@@ -27,9 +27,7 @@ class FoodScreen extends StatelessWidget {
         ChangeNotifierProvider(
           create: (context) => DateSelectionModel(DateTime.now()),
         ),
-        ChangeNotifierProvider(
-          create: (context) => DayOrWeekModel(),
-        ),
+
         ChangeNotifierProxyProvider2<ReservationModel, DateSelectionModel,
             DayModel>(
           create: (context) => DayModel(),
@@ -42,10 +40,10 @@ class FoodScreen extends StatelessWidget {
         appBar: AppBar(
           title: Text(this.userGroup.name),
           actions: <Widget>[
-            Consumer<DayOrWeekModel>(
-              builder: (context, dayOrWeekModel, child) => IconButton(
+            Consumer<DateSelectionModel>(
+              builder: (context, dateSelectionModel, child) => IconButton(
                 onPressed: () {
-                  dayOrWeekModel.changeView();
+                  dateSelectionModel.changeView();
                 },
                 icon: Icon(Icons.calendar_today),
               ),
@@ -60,9 +58,9 @@ class FoodScreen extends StatelessWidget {
             ),
             ChoiceButtons(group: this.userGroup),
             Container(
-              child: Consumer<DayOrWeekModel>(
-                builder: (context, dayOrWeekModel, child) =>
-                    dayOrWeekModel.dayView
+              child: Consumer<DateSelectionModel>(
+                builder: (context, dateSelectionModel, child) =>
+                    dateSelectionModel.dayView
                         ? MyAnimationWidget(this.userGroup)
                         : SizedBox.shrink(),
               ),
@@ -70,9 +68,9 @@ class FoodScreen extends StatelessWidget {
             ),
             Expanded(
               child: Container(
-                child: Consumer<DayOrWeekModel>(
-                  builder: (context, dayOrWeekModel, child) =>
-                      dayOrWeekModel.dayView ? DayListView() : WeekView(),
+                child: Consumer<DateSelectionModel>(
+                  builder: (context, dateSelectionModel, child) =>
+                      dateSelectionModel.dayView ? DayListView() : WeekView(),
                 ),
                 margin: EdgeInsets.fromLTRB(20, 0, 20, 20),
               ),

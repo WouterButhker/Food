@@ -3,7 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:provider/provider.dart';
 import 'package:student/src/entities/group.dart';
 import 'package:student/src/widgets/food_screen/day_summary.dart';
-import 'package:student/src/widgets/food_screen/models/dayOrWeekModel.dart';
+import 'package:student/src/widgets/food_screen/models/date_selection_model.dart';
 
 class MyAnimationWidget extends StatefulWidget {
   final Group _group;
@@ -39,7 +39,7 @@ class _StatelessAnimationWidget extends StatelessWidget {
     AnimationController _animationController = AnimationController(
         vsync: _tickerProviderStateMixin, duration: Duration(seconds: 1));
 
-    Provider.of<DayOrWeekModel>(context, listen: false).animationController = _animationController;
+    Provider.of<DateSelectionModel>(context, listen: false).animationController = _animationController;
 
     Animation<Offset> _offsetAnimation = Tween<Offset>(
       begin: Offset.zero,

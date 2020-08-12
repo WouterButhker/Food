@@ -18,7 +18,18 @@ class LanguageHelper {
       return AppLocalizations.of(context).translate("yesterday") + " " +  dateFormat.format(date);
     }
     return DateFormat.MMMEd(AppLocalizations.of(context).locale.toString()).format(date);
+  }
 
+  static String weekViewDate(DateTime monday, BuildContext context) {
+    DateFormat dateFormat = DateFormat.LLLL(AppLocalizations.of(context).locale.toString());
+    int dayOfTheMonthMonday = monday.day;
+    int dayOfTheMonthSunday = monday.add(Duration(days: 6)).day;
+    if (dayOfTheMonthSunday < dayOfTheMonthMonday) {
+      // TODO
+      return "//TODO";
+    } else {
+      return dayOfTheMonthMonday.toString() + "-" + dayOfTheMonthSunday.toString() + " " + dateFormat.format(monday);
+    }
   }
 
 

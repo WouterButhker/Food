@@ -36,4 +36,6 @@ class DayModel extends ChangeNotifier {
     if (oldDayReservations != reservationsForDay) notifyListeners();
   }
 
+
+
 }
