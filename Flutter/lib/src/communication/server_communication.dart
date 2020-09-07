@@ -2,7 +2,9 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:core';
 import 'dart:io';
+import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/http.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -12,11 +14,13 @@ import 'package:student/src/entities/user.dart';
 import 'package:http_parser/http_parser.dart';
 
 class ServerCommunication {
-  static String _host = "http://192.168.2.9:8080";
+  static String _host = "http://192.168.0.190:8080";
+  static int timeoutInSeconds = 5;
   static String _auth;
 
   static Future<String> getAuth() async {
     if (_auth != null) return _auth;
+
     final _pref = await SharedPreferences.getInstance();
     _auth = _pref.get("header");
     return _auth;
@@ -30,21 +34,30 @@ class ServerCommunication {
     return;
   }
 
-  static Future<http.Response> _authenticatedGet(String url) async {
+  static Future<http.Response> _authenticatedGet(String url, {BuildContext context}) async {
     String _url = _host + url;
 
     print("GET Request to " + _url);
 
-    http.Response _res = await http.get(_url, headers: {
+    http.Response res = await http.get(_url, headers: {
       HttpHeaders.authorizationHeader: await getAuth()
-    }).timeout(Duration(seconds: 5));
+    }).timeout(Duration(seconds: timeoutInSeconds), onTimeout: () {
+      _handleError(null, context);
+      return;
+    });
+
     print(
-        "Response " + _res.statusCode.toString() + ': ' + _res.body.toString());
-    return _res;
+        "Response " + res.statusCode.toString() + ': ' + res.body.toString());
+
+    if (context != null && res.statusCode != 200) {
+      _handleError(res, context);
+    }
+
+    return res;
   }
 
   static Future<http.Response> _authenticatedPost(
-      String url, Object obj) async {
+      String url, Object obj, {BuildContext context}) async {
     String _url = _host + url;
     Map<String, String> _headers = {
       HttpHeaders.authorizationHeader: await getAuth(),
@@ -53,15 +66,23 @@ class ServerCommunication {
     String json = jsonEncode(obj);
 
     print("POST request to " + url + " With body: '" + json + "'");
-    Response _res = await http
+    Response res = await http
         .post(_url, headers: _headers, body: json)
-        .timeout(Duration(seconds: 5));
+        .timeout(Duration(seconds: timeoutInSeconds), onTimeout: () {
+      _handleError(null, context);
+      return;
+    });
+
     print(
-        "Response " + _res.statusCode.toString() + ': ' + _res.body.toString());
-    return _res;
+        "Response " + res.statusCode.toString() + ': ' + res.body.toString());
+    if (context != null && res.statusCode != 200) {
+      _handleError(res, context);
+    }
+
+    return res;
   }
 
-  static Future<http.Response> _authenticatedPut(String url, Object obj) async {
+  static Future<http.Response> _authenticatedPut(String url, Object obj, {BuildContext context}) async {
     String _url = _host + url;
     Map<String, String> _headers = {
       HttpHeaders.authorizationHeader: await getAuth(),
@@ -70,15 +91,23 @@ class ServerCommunication {
     String json = jsonEncode(obj);
 
     print("POST request to " + url + " With body: '" + json);
-    Response _res = await http
+    Response res = await http
         .put(_url, headers: _headers, body: json)
-        .timeout(Duration(seconds: 5));
+        .timeout(Duration(seconds: timeoutInSeconds), onTimeout: () {
+      _handleError(null, context);
+      return;
+    });
+
     print(
-        "Response " + _res.statusCode.toString() + ': ' + _res.body.toString());
-    return _res;
+        "Response " + res.statusCode.toString() + ': ' + res.body.toString());
+    if (context != null && res.statusCode != 200) {
+      _handleError(res, context);
+    }
+
+    return res;
   }
 
-  static Future<http.Response> _authenticatedDelete(String url) async {
+  static Future<http.Response> _authenticatedDelete(String url, {BuildContext context}) async {
     String _url = _host + url;
     Map<String, String> _headers = {
       HttpHeaders.authorizationHeader: await getAuth(),
@@ -86,31 +115,18 @@ class ServerCommunication {
     };
 
     print("DELETE request to " + url);
-    Response _res = await http
+    Response res = await http
         .delete(_url, headers: _headers)
-        .timeout(Duration(seconds: 5));
+        .timeout(Duration(seconds: timeoutInSeconds), onTimeout: () {
+          _handleError(null, context);
+          return;
+    });
+
     print(
-        "Response " + _res.statusCode.toString() + ': ' + _res.body.toString());
-    return _res;
-  }
-
-  static Future<http.StreamedResponse> _authenticatedMultiPart(
-      String url, File file) async {
-    print('MultiPart request to ' + url);
-    Uri uri = Uri.parse(_host + url);
-    var request = http.MultipartRequest("POST", uri);
-    //request.fields["user"] = "test";
-    request.headers[HttpHeaders.authorizationHeader] = await getAuth();
-    request.files.add(http.MultipartFile.fromBytes(
-        "file", await file.readAsBytes(),
-        filename: "file", contentType: MediaType("image", "jpg")));
-
-    http.StreamedResponse res = await request.send();
-    print("Response " +
-        res.statusCode.toString() +
-        ', length ' +
-        res.contentLength.toString());
-
+        "Response " + res.statusCode.toString() + ': ' + res.body.toString());
+    if (context != null && res.statusCode != 200) {
+      _handleError(res, context);
+    }
     return res;
   }
 
@@ -127,6 +143,69 @@ class ServerCommunication {
     return res;
   }
 
+  static Future<http.StreamedResponse> _authenticatedMultiPart(
+      String url, File file, {BuildContext context}) async {
+    print('MultiPart request to ' + url);
+    Uri uri = Uri.parse(_host + url);
+    var request = http.MultipartRequest("POST", uri);
+    //request.fields["user"] = "test";
+    request.headers[HttpHeaders.authorizationHeader] = await getAuth();
+    request.files.add(http.MultipartFile.fromBytes(
+        "file", await file.readAsBytes(),
+        filename: "file", contentType: MediaType("image", "jpg")));
+
+    http.StreamedResponse res = await request.send();
+    print("Response " +
+        res.statusCode.toString() +
+        ', length ' +
+        res.contentLength.toString());
+    if (context != null && res.statusCode != 200) {
+      _handleStreamError(res, context);
+    }
+
+    return res;
+  }
+
+  /// Show snackbar with a specified error.
+  ///
+  /// if res is null, assume timeout
+  /// otherwise, show status code and message of res
+  static void _handleError(http.Response res, BuildContext context) {
+    String errorText;
+    if (res == null) {
+      errorText = "Request timed out";
+    } else {
+      Map<String, dynamic> jsonResponse = json.decode(res.body);
+      errorText = "Error " + res.statusCode.toString() + ": " + jsonResponse["message"];
+    }
+
+    final snackBar = SnackBar(
+      content: Text(errorText),
+      duration: Duration(seconds: 60),
+      backgroundColor: Theme.of(context).errorColor,
+      action: SnackBarAction(
+        onPressed: () {},
+        label: Localizations.of<MaterialLocalizations>(context, MaterialLocalizations).okButtonLabel,
+      ),
+    );
+    Scaffold.of(context).showSnackBar(snackBar);
+  }
+
+  // TODO test this method
+  static void _handleStreamError(http.StreamedResponse res, BuildContext context) {
+    print('Network error');
+    final snackBar = SnackBar(
+      content: Text("Error communicating with server " + res.statusCode.toString() + ": " + res.stream.toString()),
+      duration: Duration(seconds: 60),
+      backgroundColor: Theme.of(context).errorColor,
+      action: SnackBarAction(
+        onPressed: () {},
+        label: "Oh",
+      ),
+    );
+    Scaffold.of(context).showSnackBar(snackBar);
+  }
+
   static Future<http.StreamedResponse> uploadProfilePicture(File image) async {
     return await _authenticatedMultiPart("/users/picture", image);
   }
@@ -135,8 +214,8 @@ class ServerCommunication {
     return await _authenticatedGet("/users/login");
   }
 
-  static Future<http.Response> sendReservation(Reservation res) async {
-    return await _authenticatedPut("/reserve", res);
+  static Future<http.Response> sendReservation(Reservation res, BuildContext context) async {
+    return await _authenticatedPut("/reserve", res, context: context);
   }
   
   static Future<http.Response> deleteReservation(Reservation res) async {

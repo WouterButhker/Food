@@ -26,8 +26,9 @@ class DateSelectionModel extends ChangeNotifier {
       int daysToPreviousMonday = dayOfTheWeek - 1;
       if (daysToPreviousMonday == 0) daysToPreviousMonday = 7;
       selectedDate = selectedDate.subtract(Duration(days: daysToPreviousMonday));
-      notifyListeners();
     }
+
+    notifyListeners();
   }
 
   void goToSpecific(DateTime date) {

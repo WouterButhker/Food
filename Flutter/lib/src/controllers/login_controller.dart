@@ -79,7 +79,8 @@ class LoginController {
     });
 
     if (res.statusCode != 200) {
-      throw new Exception("Failed to login");
+      throw new Exception("Failed to login: " + res.statusCode.toString());
+      // TODO properly handle failed login
     }
     int id = int.parse(res.body.toString());
     _saveUserData(email, id);

@@ -47,8 +47,7 @@ public class ReservationController {
 
 
     @PutMapping(path = "/reserve", consumes = MediaType.APPLICATION_JSON_VALUE)
-    Reservation makeReservation(@RequestBody String json) {
-
+    Reservation makeReservation(@RequestBody String json) throws Exception {
 
         Reservation res = parseReservation(json);
         res = reservationRepository.save(res);

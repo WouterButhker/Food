@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:core';
 
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -17,13 +18,14 @@ class FoodController {
   static void yes(DateTime date, Group group, BuildContext context) async {
     final prefs = await SharedPreferences.getInstance();
     Reservation res = Reservation(group.id, date, prefs.getInt("userId"), amountEating: 1, isCooking: false);
-    Future<Response> response = ServerCommunication.sendReservation(res);
+    Future<Response> response = ServerCommunication.sendReservation(res, context);
 
     Reservation deleted = Provider.of<ReservationModel>(context, listen: false).addReservation(res);
 
     if ((await response).statusCode != 200) {
       // undo showing reservation on screen
       // TODO add error message
+
 
       if (deleted == null) {
         // delete new reservation
@@ -38,7 +40,7 @@ class FoodController {
   static void no(DateTime date, Group group, BuildContext context) async {
     final prefs = await SharedPreferences.getInstance();
     Reservation res = Reservation(group.id, date, prefs.getInt("userId"), amountEating: 0, isCooking: false);
-    Future<Response> response = ServerCommunication.sendReservation(res);
+    Future<Response> response = ServerCommunication.sendReservation(res, context);
 
     Reservation deleted = Provider.of<ReservationModel>(context, listen: false).addReservation(res);
 
@@ -59,7 +61,7 @@ class FoodController {
   static void cook(DateTime date, Group group, BuildContext context) async {
     final prefs = await SharedPreferences.getInstance();
     Reservation res = Reservation(group.id, date, prefs.getInt("userId"), amountEating: 1, isCooking: true);
-    Future<Response> response = ServerCommunication.sendReservation(res);
+    Future<Response> response = ServerCommunication.sendReservation(res, context);
 
     Reservation deleted = Provider.of<ReservationModel>(context, listen: false).addReservation(res);
 
@@ -99,7 +101,7 @@ class FoodController {
     }
 
     Reservation res = Reservation(group.id, date, userId, amountEating: amountEating, isCooking: isCooking);
-    Future<Response> response = ServerCommunication.sendReservation(res);
+    Future<Response> response = ServerCommunication.sendReservation(res, context);
 
     Reservation deleted = Provider.of<ReservationModel>(context, listen: false).addReservation(res);
 
