@@ -34,6 +34,9 @@ class ServerCommunication {
     return;
   }
 
+  /// Makes an authenticated request to [url] and returns the response.
+  ///
+  /// if a context is supplied, errors will be handled nicely
   static Future<http.Response> _authenticatedGet(String url, {BuildContext context}) async {
     String _url = _host + url;
 
@@ -46,10 +49,10 @@ class ServerCommunication {
       return;
     });
 
-    print(
+    if (res != null) print(
         "Response " + res.statusCode.toString() + ': ' + res.body.toString());
 
-    if (context != null && res.statusCode != 200) {
+    if (res == null || res.statusCode != 200) {
       _handleError(res, context);
     }
 
@@ -73,9 +76,9 @@ class ServerCommunication {
       return;
     });
 
-    print(
+    if (res != null) print(
         "Response " + res.statusCode.toString() + ': ' + res.body.toString());
-    if (context != null && res.statusCode != 200) {
+    if (res == null || res.statusCode != 200) {
       _handleError(res, context);
     }
 
@@ -98,9 +101,9 @@ class ServerCommunication {
       return;
     });
 
-    print(
+    if (res != null) print(
         "Response " + res.statusCode.toString() + ': ' + res.body.toString());
-    if (context != null && res.statusCode != 200) {
+    if (res == null || res.statusCode != 200) {
       _handleError(res, context);
     }
 
@@ -122,9 +125,10 @@ class ServerCommunication {
           return;
     });
 
-    print(
+
+    if (res != null) print(
         "Response " + res.statusCode.toString() + ': ' + res.body.toString());
-    if (context != null && res.statusCode != 200) {
+    if (res == null || res.statusCode != 200) {
       _handleError(res, context);
     }
     return res;
@@ -154,12 +158,17 @@ class ServerCommunication {
         "file", await file.readAsBytes(),
         filename: "file", contentType: MediaType("image", "jpg")));
 
-    http.StreamedResponse res = await request.send();
-    print("Response " +
+    http.StreamedResponse res = await request.send().timeout(Duration(seconds: timeoutInSeconds), onTimeout: () {
+      _handleError(null, context);
+      return;
+    });
+
+    if (res != null) print("Response " +
         res.statusCode.toString() +
         ', length ' +
         res.contentLength.toString());
-    if (context != null && res.statusCode != 200) {
+
+    if (res == null || res.statusCode != 200) {
       _handleStreamError(res, context);
     }
 
@@ -171,6 +180,12 @@ class ServerCommunication {
   /// if res is null, assume timeout
   /// otherwise, show status code and message of res
   static void _handleError(http.Response res, BuildContext context) {
+    // TODO: make this an exception
+    if (context == null) {
+      print("No context supplied, cannot show network error to user");
+      return;
+    }
+
     String errorText;
     if (res == null) {
       errorText = "Request timed out";
@@ -188,6 +203,7 @@ class ServerCommunication {
         label: Localizations.of<MaterialLocalizations>(context, MaterialLocalizations).okButtonLabel,
       ),
     );
+    Scaffold.of(context).hideCurrentSnackBar();
     Scaffold.of(context).showSnackBar(snackBar);
   }
 
@@ -203,6 +219,7 @@ class ServerCommunication {
         label: "Oh",
       ),
     );
+    Scaffold.of(context).hideCurrentSnackBar();
     Scaffold.of(context).showSnackBar(snackBar);
   }
 
@@ -227,8 +244,7 @@ class ServerCommunication {
     return await _authenticatedPost("/groups/add", group);
   }
 
-  static Future<http.Response> getAllReservations(int groupId) async {
-    //TODO
+  static Future<http.Response> getReservationsByGroup(int groupId) async {
     return await _authenticatedGet("/reservations/all?groupId=" + groupId.toString());
   }
 

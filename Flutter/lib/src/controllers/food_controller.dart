@@ -14,35 +14,67 @@ import 'package:student/src/widgets/food_screen/models/reservations_model.dart';
 
 // TODO refactor duplicate code
 class FoodController {
-
   static void yes(DateTime date, Group group, BuildContext context) async {
     final prefs = await SharedPreferences.getInstance();
-    Reservation res = Reservation(group.id, date, prefs.getInt("userId"), amountEating: 1, isCooking: false);
-    Future<Response> response = ServerCommunication.sendReservation(res, context);
+    Reservation res = Reservation(group.id, date, prefs.getInt("userId"),
+        amountEating: 1, isCooking: false);
 
-    Reservation deleted = Provider.of<ReservationModel>(context, listen: false).addReservation(res);
+    // TODO refactor this loading snackbar
+    bool responseCompleted = false;
+    Future<Response> response =
+        ServerCommunication.sendReservation(res, context)
+            .whenComplete(()  {
+              responseCompleted = true;
+              Scaffold.of(context).hideCurrentSnackBar();
+        });
+
+    // if response takes longer than 1 second show loading icon
+    Future<void> delay = Future.delayed(Duration(seconds: 1));
+
+    delay.whenComplete(() {
+      if (!responseCompleted) {
+        SnackBar loadingSnack = SnackBar(
+          content: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              CircularProgressIndicator(),
+              Text("Making your reservation..."),
+            ],
+          ),
+        );
+
+        Scaffold.of(context).showSnackBar(loadingSnack);
+      }
+    });
+
+    Reservation deleted = Provider.of<ReservationModel>(context, listen: false)
+        .addReservation(res);
 
     if ((await response).statusCode != 200) {
       // undo showing reservation on screen
       // TODO add error message
 
-
       if (deleted == null) {
         // delete new reservation
-        Provider.of<ReservationModel>(context, listen: false).deleteReservation(date, prefs.getInt("userId"), group.id);
+        Provider.of<ReservationModel>(context, listen: false)
+            .deleteReservation(date, prefs.getInt("userId"), group.id);
       } else {
         // re-add deleted reservation, also deletes new reservation
-        Provider.of<ReservationModel>(context, listen: false).addReservation(deleted);
+        Provider.of<ReservationModel>(context, listen: false)
+            .addReservation(deleted);
       }
     }
   }
 
   static void no(DateTime date, Group group, BuildContext context) async {
     final prefs = await SharedPreferences.getInstance();
-    Reservation res = Reservation(group.id, date, prefs.getInt("userId"), amountEating: 0, isCooking: false);
-    Future<Response> response = ServerCommunication.sendReservation(res, context);
+    Reservation res = Reservation(group.id, date, prefs.getInt("userId"),
+        amountEating: 0, isCooking: false);
+    Future<Response> response =
+        ServerCommunication.sendReservation(res, context);
 
-    Reservation deleted = Provider.of<ReservationModel>(context, listen: false).addReservation(res);
+    Reservation deleted = Provider.of<ReservationModel>(context, listen: false)
+        .addReservation(res);
 
     if ((await response).statusCode != 200) {
       // undo showing reservation on screen
@@ -50,20 +82,25 @@ class FoodController {
 
       if (deleted == null) {
         // delete new reservation
-        Provider.of<ReservationModel>(context, listen: false).deleteReservation(date, prefs.getInt("userId"), group.id);
+        Provider.of<ReservationModel>(context, listen: false)
+            .deleteReservation(date, prefs.getInt("userId"), group.id);
       } else {
         // re-add deleted reservation, also deletes new reservation
-        Provider.of<ReservationModel>(context, listen: false).addReservation(deleted);
+        Provider.of<ReservationModel>(context, listen: false)
+            .addReservation(deleted);
       }
     }
   }
 
   static void cook(DateTime date, Group group, BuildContext context) async {
     final prefs = await SharedPreferences.getInstance();
-    Reservation res = Reservation(group.id, date, prefs.getInt("userId"), amountEating: 1, isCooking: true);
-    Future<Response> response = ServerCommunication.sendReservation(res, context);
+    Reservation res = Reservation(group.id, date, prefs.getInt("userId"),
+        amountEating: 1, isCooking: true);
+    Future<Response> response =
+        ServerCommunication.sendReservation(res, context);
 
-    Reservation deleted = Provider.of<ReservationModel>(context, listen: false).addReservation(res);
+    Reservation deleted = Provider.of<ReservationModel>(context, listen: false)
+        .addReservation(res);
 
     if ((await response).statusCode != 200) {
       // undo showing reservation on screen
@@ -71,10 +108,12 @@ class FoodController {
 
       if (deleted == null) {
         // delete new reservation
-        Provider.of<ReservationModel>(context, listen: false).deleteReservation(date, prefs.getInt("userId"), group.id);
+        Provider.of<ReservationModel>(context, listen: false)
+            .deleteReservation(date, prefs.getInt("userId"), group.id);
       } else {
         // re-add deleted reservation, also deletes new reservation
-        Provider.of<ReservationModel>(context, listen: false).addReservation(deleted);
+        Provider.of<ReservationModel>(context, listen: false)
+            .addReservation(deleted);
       }
     }
   }
@@ -82,17 +121,19 @@ class FoodController {
   static void maybe(DateTime date, Group group, BuildContext context) async {
     final prefs = await SharedPreferences.getInstance();
     Reservation res = Reservation(group.id, date, prefs.getInt("userId"));
-    Future<Response> response =  ServerCommunication.deleteReservation(res);
+    Future<Response> response = ServerCommunication.deleteReservation(res);
 
-    Reservation deleted = Provider.of<ReservationModel>(context, listen: false).deleteReservation(date, prefs.getInt("userId"), group.id);
+    Reservation deleted = Provider.of<ReservationModel>(context, listen: false)
+        .deleteReservation(date, prefs.getInt("userId"), group.id);
 
     if ((await response).statusCode != 200) {
-      Provider.of<ReservationModel>(context, listen: false).addReservation(deleted);
+      Provider.of<ReservationModel>(context, listen: false)
+          .addReservation(deleted);
     }
   }
 
-  static void custom(DateTime date, Group group, BuildContext context, {int amountEating: 1, bool isCooking: false, int userId}) async {
-
+  static void custom(DateTime date, Group group, BuildContext context,
+      {int amountEating: 1, bool isCooking: false, int userId}) async {
     if (userId == null) {
       final prefs = await SharedPreferences.getInstance();
       userId = prefs.getInt("userId");
@@ -100,10 +141,13 @@ class FoodController {
       // TODO verify user is correct
     }
 
-    Reservation res = Reservation(group.id, date, userId, amountEating: amountEating, isCooking: isCooking);
-    Future<Response> response = ServerCommunication.sendReservation(res, context);
+    Reservation res = Reservation(group.id, date, userId,
+        amountEating: amountEating, isCooking: isCooking);
+    Future<Response> response =
+        ServerCommunication.sendReservation(res, context);
 
-    Reservation deleted = Provider.of<ReservationModel>(context, listen: false).addReservation(res);
+    Reservation deleted = Provider.of<ReservationModel>(context, listen: false)
+        .addReservation(res);
 
     if ((await response).statusCode != 200) {
       // undo showing reservation on screen
@@ -111,16 +155,18 @@ class FoodController {
 
       if (deleted == null) {
         // delete new reservation
-        Provider.of<ReservationModel>(context, listen: false).deleteReservation(date, userId, group.id);
+        Provider.of<ReservationModel>(context, listen: false)
+            .deleteReservation(date, userId, group.id);
       } else {
         // re-add deleted reservation, also deletes new reservation
-        Provider.of<ReservationModel>(context, listen: false).addReservation(deleted);
+        Provider.of<ReservationModel>(context, listen: false)
+            .addReservation(deleted);
       }
     }
   }
 
   static Future<List<Reservation>> getAllReservations(int groupId) async {
-    Response res = await ServerCommunication.getAllReservations(groupId);
+    Response res = await ServerCommunication.getReservationsByGroup(groupId);
     Iterable i = json.decode(res.body);
     return List<Reservation>.from(i.map((val) => Reservation.fromJson(val)));
   }
@@ -130,5 +176,4 @@ class FoodController {
     Iterable i = json.decode(res.body);
     return List<User>.from(i.map((val) => User.fromJson(val)));
   }
-
 }
