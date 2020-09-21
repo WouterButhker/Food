@@ -4,11 +4,11 @@ import 'dart:core';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/http.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:student/src/entities/group.dart';
+import 'package:student/src/entities/network_exception.dart';
 import 'package:student/src/entities/reservation.dart';
 import 'package:student/src/entities/user.dart';
 import 'package:http_parser/http_parser.dart';
@@ -72,14 +72,13 @@ class ServerCommunication {
     Response res = await http
         .post(_url, headers: _headers, body: json)
         .timeout(Duration(seconds: timeoutInSeconds), onTimeout: () {
-      _handleError(null, context);
-      return;
+      throw NetworkException(message: "Network timed out");
     });
 
     if (res != null) print(
         "Response " + res.statusCode.toString() + ': ' + res.body.toString());
     if (res == null || res.statusCode != 200) {
-      _handleError(res, context);
+      throw NetworkException(response: res);
     }
 
     return res;

@@ -1,9 +1,12 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart';
+import 'package:path/path.dart';
 import 'package:student/src/communication/server_communication.dart';
 import 'package:student/src/entities/reservation.dart';
 
 void main() {
+  TestWidgetsFlutterBinding.ensureInitialized();
   Reservation res = Reservation(1, DateTime.utc(2020), 1);
 
   group("Reservation class", () {
@@ -39,7 +42,7 @@ void main() {
 
   group("Server communication", () {
     test("Send reservation", () async {
-      Response response = await ServerCommunication.sendReservation(res);
+      Response response = await ServerCommunication.sendReservation(res, null);
       expect(response.statusCode, 200);
     });
   });
