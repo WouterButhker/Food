@@ -7,14 +7,19 @@ import 'package:http/http.dart';
 class NetworkException implements Exception {
   String _message;
   Response _res;
+  StreamedResponse _streamedRes;
 
-  NetworkException({Response response, String message = "Network error"}) {
+  NetworkException({Response response, String message = "Network error", StreamedResponse streamedResponse}) {
     this._message = message;
     this._res = response;
+    this._streamedRes = streamedResponse;
 
     if (_res != null) {
       Map<String, dynamic> jsonResponse = json.decode(_res.body);
       this._message = "Network error " + _res.statusCode.toString() + ": " + jsonResponse["message"];
+    } else if (_streamedRes != null) {
+      // TODO test this
+      this._message = "Network error " + _streamedRes.statusCode.toString() + ": " + _streamedRes.stream.toString();
     }
   }
 

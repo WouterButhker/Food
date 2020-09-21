@@ -14,9 +14,85 @@ import 'package:student/src/entities/user.dart';
 import 'package:http_parser/http_parser.dart';
 
 class ServerCommunication {
-  static String _host = "http://192.168.0.190:8080";
-  static int timeoutInSeconds = 5;
+
+  // TODO: Convert to secure storage
+  // https://pub.dev/packages/flutter_secure_storage
+  /// Generates the authentication header and saves it
+  static Future setAuthHeader(String email, String pass) async {
+    _ServerRequests._auth = "Basic " + base64Encode(utf8.encode("$email:$pass"));
+    final _prefs = await SharedPreferences.getInstance();
+    _prefs.setString("header", _ServerRequests._auth);
+    return;
+  }
+
+  static Future<http.Response> register(User user) async {
+    return _ServerRequests.register(user);
+  }
+
+  static Future<http.StreamedResponse> uploadProfilePicture(File image) async {
+    return await _ServerRequests.authenticatedMultiPart("/users/picture", image);
+  }
+
+  static Future<http.Response> getUserId() async {
+    return await _ServerRequests.authenticatedGet("/users/login");
+  }
+
+  static Future<http.Response> sendReservation(
+      Reservation res, BuildContext context) async {
+    return await _ServerRequests.authenticatedPut("/reserve", res, context: context);
+  }
+
+  static Future<http.Response> deleteReservation(Reservation res) async {
+    return await _ServerRequests.authenticatedDelete("/reservations/delete?groupId=" +
+        res.group.toString() +
+        "&date=" +
+        res.date.toIso8601String());
+  }
+
+  static Future<http.Response> addGroup(String name) async {
+    Group group = new Group.onlyName(name);
+    return await _ServerRequests.authenticatedPost("/groups/add", group);
+  }
+
+  static Future<http.Response> getReservationsByGroup(int groupId) async {
+    return await _ServerRequests.authenticatedGet(
+        "/reservations/all?groupId=" + groupId.toString());
+  }
+
+//  static Future<http.Response> getUsersFromGroup(int groupId) async {
+//    return await _ServerRequests._authenticatedGet("/users/get");
+//  }
+
+  static String getProfilePictureLink(String email) {
+    return _ServerRequests.host + "/users/picture?user=" + email;
+  }
+
+  static Future<NetworkImage> getProfilePicture(String email) async {
+    String url = _ServerRequests.host + "/users/picture?user=" + email;
+    return _ServerRequests.authenticatedNetworkImage(url);
+  }
+
+  static Future<http.Response> getUserGroups() async {
+    http.Response res = await _ServerRequests.authenticatedGet("/groups/getUserGroups");
+    return res;
+  }
+
+  static Future<http.Response> getUserName(int userId) async {
+    return await _ServerRequests.authenticatedGet(
+        "/users/getUserName?userId=" + userId.toString());
+  }
+
+  static Future<http.Response> getUsersInGroup(int groupId) async {
+    return await _ServerRequests.authenticatedGet(
+        "/users/getUsersInGroup?groupId=" + groupId.toString());
+  }
+}
+
+class _ServerRequests {
+  static const String host = String.fromEnvironment('HOST', defaultValue: "http://192.168.2.3:8080");
   static String _auth;
+  static const int timeoutInSeconds = 5;
+
 
   static Future<String> getAuth() async {
     if (_auth != null) return _auth;
@@ -26,42 +102,35 @@ class ServerCommunication {
     return _auth;
   }
 
-  /// Generates the authentication header and saves it in memory and shared preferences
-  static Future setAuthHeader(String email, String pass) async {
-    _auth = "Basic " + base64Encode(utf8.encode("$email:$pass"));
-    final _prefs = await SharedPreferences.getInstance();
-    _prefs.setString("header", _auth);
-    return;
-  }
-
-  /// Makes an authenticated request to [url] and returns the response.
+  /// Makes an authenticated GET request to [url] and returns the response.
   ///
   /// if a context is supplied, errors will be handled nicely
-  static Future<http.Response> _authenticatedGet(String url, {BuildContext context}) async {
-    String _url = _host + url;
+  static Future<http.Response> authenticatedGet(String url,
+      {BuildContext context}) async {
+    String _url = host + url;
 
     print("GET Request to " + _url);
 
     http.Response res = await http.get(_url, headers: {
       HttpHeaders.authorizationHeader: await getAuth()
     }).timeout(Duration(seconds: timeoutInSeconds), onTimeout: () {
-      _handleError(null, context);
-      return;
+      throw NetworkException(message: "Network timed out");
     });
 
-    if (res != null) print(
-        "Response " + res.statusCode.toString() + ': ' + res.body.toString());
+    if (res != null)
+      print(
+          "Response " + res.statusCode.toString() + ': ' + res.body.toString());
 
     if (res == null || res.statusCode != 200) {
-      _handleError(res, context);
+      throw NetworkException(response: res);
     }
 
     return res;
   }
 
-  static Future<http.Response> _authenticatedPost(
-      String url, Object obj, {BuildContext context}) async {
-    String _url = _host + url;
+  static Future<http.Response> authenticatedPost(String url, Object obj,
+      {BuildContext context}) async {
+    String _url = host + url;
     Map<String, String> _headers = {
       HttpHeaders.authorizationHeader: await getAuth(),
       HttpHeaders.contentTypeHeader: "application/json"
@@ -75,8 +144,9 @@ class ServerCommunication {
       throw NetworkException(message: "Network timed out");
     });
 
-    if (res != null) print(
-        "Response " + res.statusCode.toString() + ': ' + res.body.toString());
+    if (res != null)
+      print(
+          "Response " + res.statusCode.toString() + ': ' + res.body.toString());
     if (res == null || res.statusCode != 200) {
       throw NetworkException(response: res);
     }
@@ -84,8 +154,9 @@ class ServerCommunication {
     return res;
   }
 
-  static Future<http.Response> _authenticatedPut(String url, Object obj, {BuildContext context}) async {
-    String _url = _host + url;
+  static Future<http.Response> authenticatedPut(String url, Object obj,
+      {BuildContext context}) async {
+    String _url = host + url;
     Map<String, String> _headers = {
       HttpHeaders.authorizationHeader: await getAuth(),
       HttpHeaders.contentTypeHeader: "application/json"
@@ -96,21 +167,22 @@ class ServerCommunication {
     Response res = await http
         .put(_url, headers: _headers, body: json)
         .timeout(Duration(seconds: timeoutInSeconds), onTimeout: () {
-      _handleError(null, context);
-      return;
+      throw NetworkException(message: "Network timed out");
     });
 
-    if (res != null) print(
-        "Response " + res.statusCode.toString() + ': ' + res.body.toString());
+    if (res != null)
+      print(
+          "Response " + res.statusCode.toString() + ': ' + res.body.toString());
     if (res == null || res.statusCode != 200) {
-      _handleError(res, context);
+      throw NetworkException(response: res);
     }
 
     return res;
   }
 
-  static Future<http.Response> _authenticatedDelete(String url, {BuildContext context}) async {
-    String _url = _host + url;
+  static Future<http.Response> authenticatedDelete(String url,
+      {BuildContext context}) async {
+    String _url = host + url;
     Map<String, String> _headers = {
       HttpHeaders.authorizationHeader: await getAuth(),
       HttpHeaders.contentTypeHeader: "application/json"
@@ -120,21 +192,20 @@ class ServerCommunication {
     Response res = await http
         .delete(_url, headers: _headers)
         .timeout(Duration(seconds: timeoutInSeconds), onTimeout: () {
-          _handleError(null, context);
-          return;
+      throw NetworkException(message: "Network timed out");
     });
 
-
-    if (res != null) print(
-        "Response " + res.statusCode.toString() + ': ' + res.body.toString());
+    if (res != null)
+      print(
+          "Response " + res.statusCode.toString() + ': ' + res.body.toString());
     if (res == null || res.statusCode != 200) {
-      _handleError(res, context);
+      throw NetworkException(response: res);
     }
     return res;
   }
 
   static Future<http.Response> register(User user) async {
-    String url = _host + "/users/register";
+    String url = host + "/users/register";
     var json = jsonEncode(user);
     print("POST request (no auth) to " + url + " With body: '" + json + "'");
 
@@ -146,10 +217,11 @@ class ServerCommunication {
     return res;
   }
 
-  static Future<http.StreamedResponse> _authenticatedMultiPart(
-      String url, File file, {BuildContext context}) async {
+  static Future<http.StreamedResponse> authenticatedMultiPart(
+      String url, File file,
+      {BuildContext context}) async {
     print('MultiPart request to ' + url);
-    Uri uri = Uri.parse(_host + url);
+    Uri uri = Uri.parse(host + url);
     var request = http.MultipartRequest("POST", uri);
     //request.fields["user"] = "test";
     request.headers[HttpHeaders.authorizationHeader] = await getAuth();
@@ -157,120 +229,27 @@ class ServerCommunication {
         "file", await file.readAsBytes(),
         filename: "file", contentType: MediaType("image", "jpg")));
 
-    http.StreamedResponse res = await request.send().timeout(Duration(seconds: timeoutInSeconds), onTimeout: () {
-      _handleError(null, context);
-      return;
+    http.StreamedResponse res = await request
+        .send()
+        .timeout(Duration(seconds: timeoutInSeconds), onTimeout: () {
+      throw NetworkException(message: "Network timed out");
     });
 
-    if (res != null) print("Response " +
-        res.statusCode.toString() +
-        ', length ' +
-        res.contentLength.toString());
+    if (res != null)
+      print("Response " +
+          res.statusCode.toString() +
+          ', length ' +
+          res.contentLength.toString());
 
     if (res == null || res.statusCode != 200) {
-      _handleStreamError(res, context);
+      throw NetworkException(streamedResponse: res);
     }
 
     return res;
   }
 
-  /// Show snackbar with a specified error.
-  ///
-  /// if res is null, assume timeout
-  /// otherwise, show status code and message of res
-  static void _handleError(http.Response res, BuildContext context) {
-    // TODO: make this an exception
-    if (context == null) {
-      print("No context supplied, cannot show network error to user");
-      return;
-    }
-
-    String errorText;
-    if (res == null) {
-      errorText = "Request timed out";
-    } else {
-      Map<String, dynamic> jsonResponse = json.decode(res.body);
-      errorText = "Error " + res.statusCode.toString() + ": " + jsonResponse["message"];
-    }
-
-    final snackBar = SnackBar(
-      content: Text(errorText),
-      duration: Duration(seconds: 60),
-      backgroundColor: Theme.of(context).errorColor,
-      action: SnackBarAction(
-        onPressed: () {},
-        label: Localizations.of<MaterialLocalizations>(context, MaterialLocalizations).okButtonLabel,
-      ),
-    );
-    Scaffold.of(context).hideCurrentSnackBar();
-    Scaffold.of(context).showSnackBar(snackBar);
+  static Future<NetworkImage> authenticatedNetworkImage(String url) async {
+    return NetworkImage(url,
+        headers: {HttpHeaders.authorizationHeader: await getAuth()});
   }
-
-  // TODO test this method
-  static void _handleStreamError(http.StreamedResponse res, BuildContext context) {
-    print('Network error');
-    final snackBar = SnackBar(
-      content: Text("Error communicating with server " + res.statusCode.toString() + ": " + res.stream.toString()),
-      duration: Duration(seconds: 60),
-      backgroundColor: Theme.of(context).errorColor,
-      action: SnackBarAction(
-        onPressed: () {},
-        label: "Oh",
-      ),
-    );
-    Scaffold.of(context).hideCurrentSnackBar();
-    Scaffold.of(context).showSnackBar(snackBar);
-  }
-
-  static Future<http.StreamedResponse> uploadProfilePicture(File image) async {
-    return await _authenticatedMultiPart("/users/picture", image);
-  }
-
-  static Future<http.Response> getUserId() async {
-    return await _authenticatedGet("/users/login");
-  }
-
-  static Future<http.Response> sendReservation(Reservation res, BuildContext context) async {
-    return await _authenticatedPut("/reserve", res, context: context);
-  }
-  
-  static Future<http.Response> deleteReservation(Reservation res) async {
-    return await _authenticatedDelete("/reservations/delete?groupId=" + res.group.toString() + "&date=" + res.date.toIso8601String());
-  }
-
-  static Future<http.Response> addGroup(String name) async {
-    Group group = new Group.onlyName(name);
-    return await _authenticatedPost("/groups/add", group);
-  }
-
-  static Future<http.Response> getReservationsByGroup(int groupId) async {
-    return await _authenticatedGet("/reservations/all?groupId=" + groupId.toString());
-  }
-
-//  static Future<http.Response> getUsersFromGroup(int groupId) async {
-//    return await _authenticatedGet("/users/get");
-//  }
-
-  static String getProfilePictureLink(String email) {
-    return _host + "/users/picture?user=" + email;
-  }
-
-  static Future<NetworkImage> getProfilePicture(String email) async {
-    String url = _host + "/users/picture?user=" + email;
-    return NetworkImage(url, headers: {HttpHeaders.authorizationHeader: await getAuth()});
-  }
-
-  static Future<http.Response> getUserGroups() async {
-    http.Response res = await _authenticatedGet("/groups/getUserGroups");
-    return res;
-  }
-
-  static Future<http.Response> getUserName(int userId) async {
-    return await _authenticatedGet("/users/getUserName?userId=" + userId.toString());
-  }
-
-  static Future<http.Response> getUsersInGroup(int groupId) async {
-    return await _authenticatedGet("/users/getUsersInGroup?groupId=" + groupId.toString());
-  }
-
 }
