@@ -4,7 +4,7 @@ import 'dart:core';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:http/http.dart' as http;
+import 'package:http/http.dart' as http; // TODO
 import 'package:http/http.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:student/src/entities/group.dart';
@@ -38,8 +38,8 @@ class ServerCommunication {
   }
 
   static Future<http.Response> sendReservation(
-      Reservation res, BuildContext context) async {
-    return await _ServerRequests.authenticatedPut("/reserve", res, context: context);
+      Reservation res) async {
+    return await _ServerRequests.authenticatedPut("/reserve", res);
   }
 
   static Future<http.Response> deleteReservation(Reservation res) async {
@@ -105,8 +105,7 @@ class _ServerRequests {
   /// Makes an authenticated GET request to [url] and returns the response.
   ///
   /// if a context is supplied, errors will be handled nicely
-  static Future<http.Response> authenticatedGet(String url,
-      {BuildContext context}) async {
+  static Future<http.Response> authenticatedGet(String url) async {
     String _url = host + url;
 
     print("GET Request to " + _url);
@@ -128,8 +127,7 @@ class _ServerRequests {
     return res;
   }
 
-  static Future<http.Response> authenticatedPost(String url, Object obj,
-      {BuildContext context}) async {
+  static Future<http.Response> authenticatedPost(String url, Object obj) async {
     String _url = host + url;
     Map<String, String> _headers = {
       HttpHeaders.authorizationHeader: await getAuth(),
@@ -154,8 +152,7 @@ class _ServerRequests {
     return res;
   }
 
-  static Future<http.Response> authenticatedPut(String url, Object obj,
-      {BuildContext context}) async {
+  static Future<http.Response> authenticatedPut(String url, Object obj) async {
     String _url = host + url;
     Map<String, String> _headers = {
       HttpHeaders.authorizationHeader: await getAuth(),
@@ -180,8 +177,7 @@ class _ServerRequests {
     return res;
   }
 
-  static Future<http.Response> authenticatedDelete(String url,
-      {BuildContext context}) async {
+  static Future<http.Response> authenticatedDelete(String url) async {
     String _url = host + url;
     Map<String, String> _headers = {
       HttpHeaders.authorizationHeader: await getAuth(),
@@ -218,8 +214,7 @@ class _ServerRequests {
   }
 
   static Future<http.StreamedResponse> authenticatedMultiPart(
-      String url, File file,
-      {BuildContext context}) async {
+      String url, File file) async {
     print('MultiPart request to ' + url);
     Uri uri = Uri.parse(host + url);
     var request = http.MultipartRequest("POST", uri);

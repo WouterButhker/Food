@@ -8,6 +8,7 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:student/src/communication/server_communication.dart';
 import 'package:student/src/entities/group.dart';
+import 'package:student/src/entities/network_exception.dart';
 import 'package:student/src/entities/reservation.dart';
 import 'package:student/src/entities/user.dart';
 import 'package:student/src/widgets/food_screen/models/reservations_model.dart';
@@ -21,12 +22,29 @@ class FoodController {
 
     // TODO refactor this loading snackbar
     bool responseCompleted = false;
-    Future<Response> response =
-        ServerCommunication.sendReservation(res, context)
-            .whenComplete(()  {
-              responseCompleted = true;
-              Scaffold.of(context).hideCurrentSnackBar();
-        });
+
+    Future<Response> response;
+    Reservation deleted = Provider.of<ReservationModel>(context, listen: false)
+        .addReservation(res);
+
+    try {
+      response =
+      ServerCommunication.sendReservation(res).whenComplete(() {
+        responseCompleted = true;
+        Scaffold.of(context).hideCurrentSnackBar();
+      });
+    } on NetworkException catch (e) {
+      e.showErrorSnackbar(context);
+      if (deleted == null) {
+        // delete new reservation
+        Provider.of<ReservationModel>(context, listen: false)
+            .deleteReservation(date, prefs.getInt("userId"), group.id);
+      } else {
+        // re-add deleted reservation, also deletes new reservation
+        Provider.of<ReservationModel>(context, listen: false)
+            .addReservation(deleted);
+      }
+    }
 
     // if response takes longer than 1 second show loading icon
     Future<void> delay = Future.delayed(Duration(seconds: 1));
@@ -47,39 +65,21 @@ class FoodController {
       }
     });
 
-    Reservation deleted = Provider.of<ReservationModel>(context, listen: false)
-        .addReservation(res);
 
-    if ((await response).statusCode != 200) {
-      // undo showing reservation on screen
-      // TODO add error message
-
-      if (deleted == null) {
-        // delete new reservation
-        Provider.of<ReservationModel>(context, listen: false)
-            .deleteReservation(date, prefs.getInt("userId"), group.id);
-      } else {
-        // re-add deleted reservation, also deletes new reservation
-        Provider.of<ReservationModel>(context, listen: false)
-            .addReservation(deleted);
-      }
-    }
   }
 
   static void no(DateTime date, Group group, BuildContext context) async {
     final prefs = await SharedPreferences.getInstance();
     Reservation res = Reservation(group.id, date, prefs.getInt("userId"),
         amountEating: 0, isCooking: false);
-    Future<Response> response =
-        ServerCommunication.sendReservation(res, context);
-
+    Future<Response> response;
     Reservation deleted = Provider.of<ReservationModel>(context, listen: false)
         .addReservation(res);
 
-    if ((await response).statusCode != 200) {
-      // undo showing reservation on screen
-      // TODO add error message
-
+    try {
+      response = ServerCommunication.sendReservation(res);
+    } on NetworkException catch (e) {
+      e.showErrorSnackbar(context);
       if (deleted == null) {
         // delete new reservation
         Provider.of<ReservationModel>(context, listen: false)
@@ -96,16 +96,14 @@ class FoodController {
     final prefs = await SharedPreferences.getInstance();
     Reservation res = Reservation(group.id, date, prefs.getInt("userId"),
         amountEating: 1, isCooking: true);
-    Future<Response> response =
-        ServerCommunication.sendReservation(res, context);
-
+    Future<Response> response;
     Reservation deleted = Provider.of<ReservationModel>(context, listen: false)
         .addReservation(res);
 
-    if ((await response).statusCode != 200) {
-      // undo showing reservation on screen
-      // TODO add error message
-
+    try {
+      response = ServerCommunication.sendReservation(res);
+    } on NetworkException catch (e) {
+      e.showErrorSnackbar(context);
       if (deleted == null) {
         // delete new reservation
         Provider.of<ReservationModel>(context, listen: false)
@@ -121,14 +119,23 @@ class FoodController {
   static void maybe(DateTime date, Group group, BuildContext context) async {
     final prefs = await SharedPreferences.getInstance();
     Reservation res = Reservation(group.id, date, prefs.getInt("userId"));
-    Future<Response> response = ServerCommunication.deleteReservation(res);
-
+    Future<Response> response;
     Reservation deleted = Provider.of<ReservationModel>(context, listen: false)
-        .deleteReservation(date, prefs.getInt("userId"), group.id);
+        .addReservation(res);
 
-    if ((await response).statusCode != 200) {
-      Provider.of<ReservationModel>(context, listen: false)
-          .addReservation(deleted);
+    try {
+      response = ServerCommunication.deleteReservation(res);
+    } on NetworkException catch (e) {
+      e.showErrorSnackbar(context);
+      if (deleted == null) {
+        // delete new reservation
+        Provider.of<ReservationModel>(context, listen: false)
+            .deleteReservation(date, prefs.getInt("userId"), group.id);
+      } else {
+        // re-add deleted reservation, also deletes new reservation
+        Provider.of<ReservationModel>(context, listen: false)
+            .addReservation(deleted);
+      }
     }
   }
 
@@ -143,20 +150,19 @@ class FoodController {
 
     Reservation res = Reservation(group.id, date, userId,
         amountEating: amountEating, isCooking: isCooking);
-    Future<Response> response =
-        ServerCommunication.sendReservation(res, context);
 
+    Future<Response> response;
     Reservation deleted = Provider.of<ReservationModel>(context, listen: false)
         .addReservation(res);
 
-    if ((await response).statusCode != 200) {
-      // undo showing reservation on screen
-      // TODO add error message
-
+    try {
+      response = ServerCommunication.sendReservation(res);
+    } on NetworkException catch (e) {
+      e.showErrorSnackbar(context);
       if (deleted == null) {
         // delete new reservation
         Provider.of<ReservationModel>(context, listen: false)
-            .deleteReservation(date, userId, group.id);
+            .deleteReservation(date, prefs.getInt("userId"), group.id);
       } else {
         // re-add deleted reservation, also deletes new reservation
         Provider.of<ReservationModel>(context, listen: false)
