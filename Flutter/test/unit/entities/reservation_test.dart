@@ -42,7 +42,7 @@ void main() {
 
   group("Server communication", () {
     test("Send reservation", () async {
-      Response response = await ServerCommunication.sendReservation(res, null);
+      Response response = await ServerCommunication.sendReservation(res);
       expect(response.statusCode, 200);
     });
   });

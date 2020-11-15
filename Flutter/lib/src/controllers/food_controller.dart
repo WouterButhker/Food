@@ -47,6 +47,7 @@ class FoodController {
     }
 
     // if response takes longer than 1 second show loading icon
+    // TODO: have a minimum time for the loading snackbar
     Future<void> delay = Future.delayed(Duration(seconds: 1));
 
     delay.whenComplete(() {
@@ -141,8 +142,9 @@ class FoodController {
 
   static void custom(DateTime date, Group group, BuildContext context,
       {int amountEating: 1, bool isCooking: false, int userId}) async {
+    SharedPreferences prefs;
     if (userId == null) {
-      final prefs = await SharedPreferences.getInstance();
+      prefs = await SharedPreferences.getInstance();
       userId = prefs.getInt("userId");
     } else {
       // TODO verify user is correct

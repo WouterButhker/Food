@@ -37,8 +37,7 @@ class ServerCommunication {
     return await _ServerRequests.authenticatedGet("/users/login");
   }
 
-  static Future<http.Response> sendReservation(
-      Reservation res) async {
+  static Future<http.Response> sendReservation(Reservation res) async {
     return await _ServerRequests.authenticatedPut("/reserve", res);
   }
 
