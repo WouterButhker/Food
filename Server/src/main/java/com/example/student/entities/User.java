@@ -40,6 +40,10 @@ public class User implements UserDetails {
     @OneToMany(mappedBy = "user")
     Set<Reservation> reservations = new HashSet<>();
 
+    @JsonIgnore
+    @OneToMany(mappedBy = "talliedUserName")
+    Set<Tally> tallies = new HashSet<>();
+
     public User(String emailAddress, String name, String password, boolean accountIsEnabled) {
         this.emailAddress = emailAddress;
         this.password = password;
@@ -85,6 +89,10 @@ public class User implements UserDetails {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public Set<Tally> getTallies() {
+        return tallies;
     }
 
     /**

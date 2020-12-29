@@ -1,12 +1,16 @@
 package com.example.student.entities;
 
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
-
-import javax.persistence.*;
-import java.sql.Timestamp;
 import java.util.Calendar;
 import java.util.Date;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 @Entity
 public class VerificationToken {
@@ -24,7 +28,6 @@ public class VerificationToken {
     User user;
 
     private Date expiryDate;
-
 
     private Date calcExpiryDate(int expiryTimeInMinutes) {
         Calendar calendar = Calendar.getInstance();
